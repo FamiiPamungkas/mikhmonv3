@@ -20,6 +20,7 @@ session_start();
 error_reporting(0);
 
 ini_set('max_execution_time', 300);
+require_once __DIR__ . '/../user-manager/utils.php';
 
 if (!isset($_SESSION["mikhmon"])) {
 	header("Location:../admin.php?id=login");
@@ -59,9 +60,9 @@ date_default_timezone_set($_SESSION['timezone']);
 	}
 
 	$srvlist = $API->comm("/ip/hotspot/print");
+    $profiles = userman("profiles");
 
 	if (isset($_POST['qty'])) {
-		
 		$qty = ($_POST['qty']);
 		$server = ($_POST['server']);
 		$user = ($_POST['user']);
@@ -138,15 +139,15 @@ date_default_timezone_set($_SESSION['timezone']);
 			}
 
 			for ($i = 1; $i <= $qty; $i++) {
-				$API->comm("/ip/hotspot/user/add", array(
-					"server" => "$server",
-					"name" => "$u[$i]",
-					"password" => "$p[$i]",
-					"profile" => "$profile",
-					"limit-uptime" => "$timelimit",
-					"limit-bytes-total" => "$datalimit",
-					"comment" => "$commt",
-				));
+//				$API->comm("/ip/hotspot/user/add", array(
+//					"server" => "$server",
+//					"name" => "$u[$i]",
+//					"password" => "$p[$i]",
+//					"profile" => "$profile",
+//					"limit-uptime" => "$timelimit",
+//					"limit-bytes-total" => "$datalimit",
+//					"comment" => "$commt",
+//				));
 			}
 		}
 
@@ -210,15 +211,15 @@ date_default_timezone_set($_SESSION['timezone']);
 
 			}
 			for ($i = 1; $i <= $qty; $i++) {
-				$API->comm("/ip/hotspot/user/add", array(
-					"server" => "$server",
-					"name" => "$u[$i]",
-					"password" => "$u[$i]",
-					"profile" => "$profile",
-					"limit-uptime" => "$timelimit",
-					"limit-bytes-total" => "$datalimit",
-					"comment" => "$commt",
-				));
+//				$API->comm("/ip/hotspot/user/add", array(
+//					"server" => "$server",
+//					"name" => "$u[$i]",
+//					"password" => "$u[$i]",
+//					"profile" => "$profile",
+//					"limit-uptime" => "$timelimit",
+//					"limit-bytes-total" => "$datalimit",
+//					"comment" => "$commt",
+//				));
 			}
 		}
 
@@ -292,6 +293,7 @@ date_default_timezone_set($_SESSION['timezone']);
 	</div>
 	<div class="card-body">
 <form autocomplete="off" method="post" action="">
+    <input type="hidden" name="user" value="up">
 	<div>
 		<?php if ($_SESSION['ubp'] != "") {
 		echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
@@ -322,91 +324,25 @@ date_default_timezone_set($_SESSION['timezone']);
   <tr>
     <td class="align-middle"><?= $_qty ?></td><td><div><input class="form-control " type="number" name="qty" min="1" max="500" value="1" required="1"></div></td>
   </tr>
-  <tr>
-    <td class="align-middle">Server</td>
-    <td>
-		<select class="form-control " name="server" required="1">
-			<option>all</option>
-				<?php $TotalReg = count($srvlist);
-			for ($i = 0; $i < $TotalReg; $i++) {
-				echo "<option>" . $srvlist[$i]['name'] . "</option>";
-			}
-			?>
-		</select>
-	</td>
-	</tr>
-	<tr>
-    <td class="align-middle"><?= $_user_mode ?></td><td>
-			<select class="form-control " onchange="defUserl();" id="user" name="user" required="1">
-				<option value="up"><?= $_user_pass ?></option>
-				<option value="vc"><?= $_user_user ?></option>
-			</select>
-		</td>
-	</tr>
-  <tr>
-    <td class="align-middle"><?= $_user_length ?></td><td>
-      <select class="form-control " id="userl" name="userl" required="1">
-        <option>4</option>
-				<option>3</option>
-				<option>4</option>
-				<option>5</option>
-				<option>6</option>
-				<option>7</option>
-				<option>8</option>
-			</select>
-    </td>
-  </tr>
+    <tr>
+        <td class="align-middle"><label for="server">Server</label></td>
+        <td>
+            <input id="server" type="text" class="form-control" name="server" value="all" readonly/>
+        </td>
+    </tr>
+    <tr>
+        <td class="align-middle"><label for="profile">Profile</label></td>
+        <td>
+            <select class="form-control" id="profile" name="profile" required="1">
+                <option value="">- Select Below -</option>
+                <?php foreach ($profiles as $k=>$v) { ?>
+                    <option value="<?= $k ?>" data-prefix="<?= $v['prefix'] ?>"><?= $k ?></option>
+                <?php } ?>
+            </select>
+        </td>
+    </tr>
   <tr>
     <td class="align-middle"><?= $_prefix ?></td><td><input class="form-control " type="text" size="6" maxlength="6" autocomplete="off" name="prefix" value=""></td>
-  </tr>
-  <tr>
-    <td class="align-middle"><?= $_character ?></td><td>
-      <select class="form-control " name="char" required="1">
-				<option id="lower" style="display:block;" value="lower"><?= $_random ?> abcd</option>
-				<option id="upper" style="display:block;" value="upper"><?= $_random ?> ABCD</option>
-				<option id="upplow" style="display:block;" value="upplow"><?= $_random ?> aBcD</option>
-				<option id="lower1" style="display:none;" value="lower"><?= $_random ?> abcd2345</option>
-				<option id="upper1" style="display:none;" value="upper"><?= $_random ?> ABCD2345</option>
-				<option id="upplow1" style="display:none;" value="upplow"><?= $_random ?> aBcD2345</option>
-				<option id="mix" style="display:block;" value="mix"><?= $_random ?> 5ab2c34d</option>
-				<option id="mix1" style="display:block;" value="mix1"><?= $_random ?> 5AB2C34D</option>
-				<option id="mix2" style="display:block;" value="mix2"><?= $_random ?> 5aB2c34D</option>
-				<option id="num" style="display:none;" value="num"><?= $_random ?> 1234</option>
-			</select>
-    </td>
-  </tr>
-  <tr>
-    <td class="align-middle"><?= $_profile ?></td><td>
-			<select class="form-control " onchange="GetVP();" id="uprof" name="profile" required="1">
-				<?php if ($genprof != "") {
-				echo "<option>" . $genprof . "</option>";
-			} else {
-			}
-			$TotalReg = count($getprofile);
-			for ($i = 0; $i < $TotalReg; $i++) {
-				echo "<option>" . $getprofile[$i]['name'] . "</option>";
-			}
-			?>
-			</select>
-		</td>
-	</tr>
-	<tr>
-    <td class="align-middle"><?= $_time_limit ?></td><td><input class="form-control " type="text" size="4" autocomplete="off" name="timelimit" value=""></td>
-  </tr>
-	<tr>
-    <td class="align-middle"><?= $_data_limit ?></td><td>
-      <div class="input-group">
-      	<div class="input-group-10 col-box-9">
-        	<input class="group-item group-item-l" type="number" min="0" max="9999" name="datalimit" value="<?= $udatalimit; ?>">
-    	</div>
-          <div class="input-group-2 col-box-3">
-              <select style="padding:4.2px;" class="group-item group-item-r" name="mbgb" required="1">
-				        <option value=1048576>MB</option>
-				        <option value=1073741824>GB</option>
-			        </select>
-          </div>
-      </div>
-    </td>
   </tr>
 	<tr>
     <td class="align-middle"><?= $_comment ?></td><td><input class="form-control " type="text" title="No special characters" id="comment" autocomplete="off" name="adcomment" value=""></td>
