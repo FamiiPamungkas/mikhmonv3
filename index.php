@@ -246,6 +246,11 @@ elseif ($hotspot == "list-quick-print") {
     echo $disable_sci;
   }
 
+    elseif ($hotspotuser == "generate2") {
+        include_once('./hotspot/generateuser2.php');
+        echo $disable_sci;
+    }
+
 // hotspot users filter by name
   elseif (substr($hotspotuser, 0, 1) == "*") {
     $_SESSION['ubn'] = $hotspotuser;
