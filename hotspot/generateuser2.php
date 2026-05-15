@@ -69,7 +69,7 @@ date_default_timezone_set($_SESSION['timezone']);
 		$userl = ($_POST['userl']);
 		$prefix = ($_POST['prefix']);
 		$char = ($_POST['char']);
-		$profile = ($_POST['profile']);
+		$profile = ($_POST['uprofile']);
 		$timelimit = ($_POST['timelimit']);
 		$datalimit = ($_POST['datalimit']);
 		$adcomment = ($_POST['adcomment']);
@@ -89,14 +89,16 @@ date_default_timezone_set($_SESSION['timezone']);
 		} else {
 			$adcomment = $adcomment;
 		}
-		$getprofile = $API->comm("/ip/hotspot/user/profile/print", array("?name" => "$profile"));
+
+        $config = $profiles[$profile];
+		$getprofile = $API->comm("/ip/hotspot/user/profile/print", array("?name" => $config['hotspot_profile']));
 		$ponlogin = $getprofile[0]['on-login'];
 		$getvalid = explode(",", $ponlogin)[3];
 		$getprice = explode(",", $ponlogin)[2];
 		$getsprice = explode(",", $ponlogin)[4];
 		$getlock = explode(",", $ponlogin)[6];
 		$_SESSION['ubp'] = $profile;
-		$commt = $user . "-" . rand(100, 999) . "-" . date("m.d.y") . "-" . $adcomment;
+		$commt = $user . "-" . rand(100, 999) . "-" . date("ymd") . "-" . $adcomment;
 		$gentemp = $commt . "|~" . $profile . "~" . $getvalid . "~" . $getprice . "!".$getsprice."~" . $timelimit . "~" . $datalimit . "~" . $getlock;
 		$gen = '<?php $genu="'.encrypt($gentemp).'";?>';
 		$temp = './voucher/temp.php';
@@ -106,44 +108,29 @@ date_default_timezone_set($_SESSION['timezone']);
 
 		$a = array("1" => "", "", 1, 2, 2, 3, 3, 4);
 
-		if ($user == "up") {
-			for ($i = 1; $i <= $qty; $i++) {
-				if ($char == "lower") {
-					$u[$i] = randLC($userl);
-				} elseif ($char == "upper") {
-					$u[$i] = randUC($userl);
-				} elseif ($char == "upplow") {
-					$u[$i] = randULC($userl);
-				} elseif ($char == "mix") {
-					$u[$i] = randNLC($userl);
-				} elseif ($char == "mix1") {
-					$u[$i] = randNUC($userl);
-				} elseif ($char == "mix2") {
-					$u[$i] = randNULC($userl);
-				}
-				if ($userl == 3) {
-					$p[$i] = randN(3);
-				} elseif ($userl == 4) {
-					$p[$i] = randN(4);
-				} elseif ($userl == 5) {
-					$p[$i] = randN(5);
-				} elseif ($userl == 6) {
-					$p[$i] = randN(6);
-				} elseif ($userl == 7) {
-					$p[$i] = randN(7);
-				} elseif ($userl == 8) {
-					$p[$i] = randN(8);
-				}
 
-				$u[$i] = "$prefix$u[$i]";
+        error_log("PROFILE ".print_r($config,true));
+        error_log("GET PROFILE  ".print_r($getprofile,true));
+        error_log("ON LOGIN STR ".print_r($ponlogin,true));
+        error_log("ON LOGIN  ".print_r(explode(",",$ponlogin),true));
+        error_log("VALID  ".print_r($getvalid,true));
+        error_log("PRICE  ".print_r($getprice,true));
+        error_log("SALES PRICE  ".print_r($getsprice,true));
+        error_log("LOCK  ".print_r($getlock,true));
+		if ($config) {
+            $u = [];
+            $p = [];
+            for ($i = 1; $i <= $qty; $i++) {
+                $u[$i] = $prefix.random_aplhanumeric($config["user_length"]);
+                $p[$i] = random_aplhanumeric($config["pass_length"]);
 			}
 
 			for ($i = 1; $i <= $qty; $i++) {
 //				$API->comm("/ip/hotspot/user/add", array(
-//					"server" => "$server",
+//					"server" => "all",
 //					"name" => "$u[$i]",
 //					"password" => "$p[$i]",
-//					"profile" => "$profile",
+//					"profile" => $config['hotspot-profile'],
 //					"limit-uptime" => "$timelimit",
 //					"limit-bytes-total" => "$datalimit",
 //					"comment" => "$commt",
@@ -151,84 +138,11 @@ date_default_timezone_set($_SESSION['timezone']);
 			}
 		}
 
-		if ($user == "vc") {
-			$shuf = ($userl - $a[$userl]);
-			for ($i = 1; $i <= $qty; $i++) {
-				if ($char == "lower") {
-					$u[$i] = randLC($shuf);
-				} elseif ($char == "upper") {
-					$u[$i] = randUC($shuf);
-				} elseif ($char == "upplow") {
-					$u[$i] = randULC($shuf);
-				}
-				if ($userl == 3) {
-					$p[$i] = randN(1);
-				} elseif ($userl == 4 || $userl == 5) {
-					$p[$i] = randN(2);
-				} elseif ($userl == 6 || $userl == 7) {
-					$p[$i] = randN(3);
-				} elseif ($userl == 8) {
-					$p[$i] = randN(4);
-				}
-
-				$u[$i] = "$prefix$u[$i]$p[$i]";
-
-				if ($char == "num") {
-					if ($userl == 3) {
-						$p[$i] = randN(3);
-					} elseif ($userl == 4) {
-						$p[$i] = randN(4);
-					} elseif ($userl == 5) {
-						$p[$i] = randN(5);
-					} elseif ($userl == 6) {
-						$p[$i] = randN(6);
-					} elseif ($userl == 7) {
-						$p[$i] = randN(7);
-					} elseif ($userl == 8) {
-						$p[$i] = randN(8);
-					}
-
-					$u[$i] = "$prefix$p[$i]";
-				}
-				if ($char == "mix") {
-					$p[$i] = randNLC($userl);
-
-
-					$u[$i] = "$prefix$p[$i]";
-				}
-				if ($char == "mix1") {
-					$p[$i] = randNUC($userl);
-
-
-					$u[$i] = "$prefix$p[$i]";
-				}
-				if ($char == "mix2") {
-					$p[$i] = randNULC($userl);
-
-
-					$u[$i] = "$prefix$p[$i]";
-				}
-
-			}
-			for ($i = 1; $i <= $qty; $i++) {
-//				$API->comm("/ip/hotspot/user/add", array(
-//					"server" => "$server",
-//					"name" => "$u[$i]",
-//					"password" => "$u[$i]",
-//					"profile" => "$profile",
-//					"limit-uptime" => "$timelimit",
-//					"limit-bytes-total" => "$datalimit",
-//					"comment" => "$commt",
-//				));
-			}
-		}
-
-
-		if ($qty < 2) {
-			echo "<script>window.location='./?hotspot-user=" . $u[1] . "&session=" . $session . "'</script>";
-		} else {
-			echo "<script>window.location='./?hotspot-user=generate&session=" . $session . "'</script>";
-		}
+//		if ($qty < 2) {
+//			echo "<script>window.location='./?hotspot-user=" . $u[1] . "&session=" . $session . "'</script>";
+//		} else {
+//			echo "<script>window.location='./?hotspot-user=generate&session=" . $session . "'</script>";
+//		}
 	}
 
 	$getprofile = $API->comm("/ip/hotspot/user/profile/print");
@@ -285,7 +199,7 @@ date_default_timezone_set($_SESSION['timezone']);
 }
 ?>
 <div class="row">
-	
+
 <div class="col-8">
 <div class="card box-bordered">
 	<div class="card-header">
@@ -295,31 +209,18 @@ date_default_timezone_set($_SESSION['timezone']);
 <form autocomplete="off" method="post" action="">
     <input type="hidden" name="user" value="up">
 	<div>
-		<?php if ($_SESSION['ubp'] != "") {
-		echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
-	} elseif ($_SESSION['vcr'] = "active") {
-		echo "    <a class='btn bg-warning' href='./?hotspot=users-by-profile&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
-	} else {
-		echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=all&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
-	}
-
-	?>
-	<a class="btn bg-pink" title="Open User List by Profile 
-<?php if ($_SESSION['ubp'] == "") {
-	echo "all";
-} else {
-	echo $uprofile;
-} ?>" href="./?hotspot=users&profile=
-<?php if ($_SESSION['ubp'] == "") {
-	echo "all";
-} else {
-	echo $uprofile;
-} ?>&session=<?= $session; ?>"> <i class="fa fa-users"></i> <?= $_user_list ?></a>
-    <button type="submit" name="save" onclick="loader()" class="btn bg-primary" title="Generate User"> <i class="fa fa-save"></i> <?= $_generate ?></button>
-    <a class="btn bg-secondary" title="Print Default" href="./voucher/print.php?id=<?= $urlprint; ?>&qr=no&session=<?= $session; ?>" target="_blank"> <i class="fa fa-print"></i> <?= $_print ?></a>
-    <a class="btn bg-danger" title="Print QR" href="./voucher/print.php?id=<?= $urlprint; ?>&qr=yes&session=<?= $session; ?>" target="_blank"> <i class="fa fa-qrcode"></i> <?= $_print_qr ?></a>
-    <a class="btn bg-info" title="Print Small" href="./voucher/print.php?id=<?= $urlprint; ?>&small=yes&session=<?= $session; ?>" target="_blank"> <i class="fa fa-print"></i> <?= $_print_small ?></a>
-</div>
+        <?php if ($_SESSION['ubp'] != "") {
+            echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close." X</a>";
+        } elseif ($_SESSION['vcr'] = "active") {
+            echo "    <a class='btn bg-warning' href='./?hotspot=users-by-profile&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close." Y</a>";
+        } else {
+            echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=all&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close." Z</a>";
+        } ?>
+        <button type="submit" name="save" onclick="loader()" class="btn bg-primary" title="Generate User"> <i class="fa fa-save"></i> <?= $_generate ?></button>
+        <a class="btn bg-secondary" title="Print Default" href="./voucher/print.php?id=<?= $urlprint; ?>&qr=no&session=<?= $session; ?>" target="_blank"> <i class="fa fa-print"></i> <?= $_print ?></a>
+        <a class="btn bg-danger" title="Print QR" href="./voucher/print.php?id=<?= $urlprint; ?>&qr=yes&session=<?= $session; ?>" target="_blank"> <i class="fa fa-qrcode"></i> <?= $_print_qr ?></a>
+        <a class="btn bg-info" title="Print Small" href="./voucher/print.php?id=<?= $urlprint; ?>&small=yes&session=<?= $session; ?>" target="_blank"> <i class="fa fa-print"></i> <?= $_print_small ?></a>
+    </div>
 <table class="table">
   <tr>
     <td class="align-middle"><?= $_qty ?></td><td><div><input class="form-control " type="number" name="qty" min="1" max="500" value="1" required="1"></div></td>
@@ -331,9 +232,9 @@ date_default_timezone_set($_SESSION['timezone']);
         </td>
     </tr>
     <tr>
-        <td class="align-middle"><label for="profile">Profile</label></td>
+        <td class="align-middle"><label for="uprofile">Profile</label></td>
         <td>
-            <select class="form-control" id="profile" name="profile" required="1">
+            <select class="form-control" id="uprofile" name="uprofile" required="required" onchange="setPrefix(this)">
                 <option value="">- Select Below -</option>
                 <?php foreach ($profiles as $k=>$v) { ?>
                     <option value="<?= $k ?>" data-prefix="<?= $v['prefix'] ?>"><?= $k ?></option>
@@ -342,7 +243,7 @@ date_default_timezone_set($_SESSION['timezone']);
         </td>
     </tr>
   <tr>
-    <td class="align-middle"><?= $_prefix ?></td><td><input class="form-control " type="text" size="6" maxlength="6" autocomplete="off" name="prefix" value=""></td>
+    <td class="align-middle"><?= $_prefix ?></td><td><input id="prefix" class="form-control " type="text" size="6" maxlength="6" autocomplete="off" name="prefix" value=""></td>
   </tr>
 	<tr>
     <td class="align-middle"><?= $_comment ?></td><td><input class="form-control " type="text" title="No special characters" id="comment" autocomplete="off" name="adcomment" value=""></td>
@@ -407,11 +308,20 @@ date_default_timezone_set($_SESSION['timezone']);
 </div>
 </div>
 </div>
-<script>
-// get valid $ price
-function GetVP(){
-  var prof = document.getElementById('uprof').value;
-  $("#GetValidPrice").load("./process/getvalidprice.php?name="+prof+"&session=<?= $session; ?> #getdata");
-} 
-</script>
+    <script>
+        // get valid $ price
+        function GetVP() {
+            var prof = document.getElementById('uprof').value;
+            $("#GetValidPrice").load("./process/getvalidprice.php?name=" + prof + "&session=<?= $session; ?> #getdata");
+        }
+
+        function setPrefix(select) {
+            const option = select.options[select.selectedIndex];
+            const prefix = option.getAttribute("data-prefix") || "";
+
+            const inputPrefix = document.getElementById("prefix");
+            inputPrefix.value = prefix;
+        }
+
+    </script>
 </div>

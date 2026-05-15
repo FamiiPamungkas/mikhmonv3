@@ -105,21 +105,21 @@ date_default_timezone_set($_SESSION['timezone']);
 
 		$a = array("1" => "", "", 1, 2, 2, 3, 3, 4);
 
-		if ($user == "up") {
-			for ($i = 1; $i <= $qty; $i++) {
-				if ($char == "lower") {
-					$u[$i] = randLC($userl);
-				} elseif ($char == "upper") {
-					$u[$i] = randUC($userl);
-				} elseif ($char == "upplow") {
-					$u[$i] = randULC($userl);
-				} elseif ($char == "mix") {
-					$u[$i] = randNLC($userl);
-				} elseif ($char == "mix1") {
-					$u[$i] = randNUC($userl);
-				} elseif ($char == "mix2") {
-					$u[$i] = randNULC($userl);
-				}
+        if ($user == "up") {
+            for ($i = 1; $i <= $qty; $i++) {
+                if ($char == "lower") {
+                    $u[$i] = randLC($userl);
+                } elseif ($char == "upper") {
+                    $u[$i] = randUC($userl);
+                } elseif ($char == "upplow") {
+                    $u[$i] = randULC($userl);
+                } elseif ($char == "mix") {
+                    $u[$i] = randNLC($userl);
+                } elseif ($char == "mix1") {
+                    $u[$i] = randNUC($userl);
+                } elseif ($char == "mix2") {
+                    $u[$i] = randNULC($userl);
+                }
 				if ($userl == 3) {
 					$p[$i] = randN(3);
 				} elseif ($userl == 4) {

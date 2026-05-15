@@ -644,4 +644,18 @@ function randNULC($length) {
 	return $result;
 }
 
+function random_aplhanumeric($length): string
+{
+    $chars = "abcdefghijklmnopqrstuvwxyz1234567890";
+    $char_count = strlen($chars);
+    $array = str_split($chars);
+
+    $result = "";
+    for ($i = 1; $i <= $length; $i++) {
+        $rand_char = rand(0, $char_count - 1);
+        $result .= $array[$rand_char];
+    }
+    return $result;
+}
+
 ?>
