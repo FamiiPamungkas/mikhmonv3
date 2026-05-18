@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use classes\Html;
+
 // hide all error
 error_reporting(0);
 ini_set('max_execution_time', 300);
@@ -24,26 +26,35 @@ if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
 
-  if ($prof == "all") {
-    $getuser = $API->comm("/ip/hotspot/user/print");
-    $TotalReg = count($getuser);
+    require_once 'helper-methods.php';
+    error_log("TESTT");
 
-    $counttuser = $API->comm("/ip/hotspot/user/print", array(
-      "count-only" => ""
-    ));
+    $user_comment = [];
+    $all_users = $API->comm("/ip/hotspot/user/print");
+    $comment_group = get_comment_group($all_users);
 
-  } elseif ($prof != "all") {
-    $getuser = $API->comm("/ip/hotspot/user/print", array(
-      "?profile" => "$prof",
-    ));
-    $TotalReg = count($getuser);
+//    error_log("COMM IS =".$comm);
+//    error_log("TESTT");
 
-    $counttuser = $API->comm("/ip/hotspot/user/print", array(
-      "count-only" => "",
-      "?profile" => "$prof",
-    ));
+    if ($prof == "all") {
+        $getuser = $API->comm("/ip/hotspot/user/print");
+        $TotalReg = count($getuser);
 
-  }
+        $counttuser = $API->comm("/ip/hotspot/user/print", array(
+            "count-only" => ""
+        ));
+
+    } elseif ($prof != "all") {
+        $getuser = $API->comm("/ip/hotspot/user/print", array(
+            "?profile" => "$prof",
+        ));
+        $TotalReg = count($getuser);
+
+        $counttuser = $API->comm("/ip/hotspot/user/print", array(
+            "count-only" => "",
+            "?profile" => "$prof",
+        ));
+    }
   if ($comm != "") {
     $getuser = $API->comm("/ip/hotspot/user/print", array(
       "?comment" => "$comm",
@@ -80,10 +91,6 @@ if (!isset($_SESSION["mikhmon"])) {
 <div class="card-header">
     <h3><i class="fa fa-users"></i> <?= $_users ?>
       <span style="font-size: 14px">
-        <?php
-        if ($counttuser == 0) {
-          echo "<script>window.location='./?hotspot=users&profile=all&session=" . $session . "</script>";
-        } ?>
          &nbsp; | &nbsp; <a href="./?hotspot-user=add&session=<?= $session; ?>" title="Add User"><i class="fa fa-user-plus"></i> <?= $_add ?></a>
         &nbsp; | &nbsp; <a href="./?hotspot-user=generate&session=<?= $session; ?>" title="Generate User"><i class="fa fa-users"></i> <?= $_generate ?></a>
          &nbsp; | &nbsp; <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=script" title="Download User List as Mikrotik Script"><i class="fa fa-download"></i> Script</a>&nbsp; | &nbsp; <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=csv" title="Download User List as CSV"><i class="fa fa-download"></i> CSV</a>
@@ -114,27 +121,13 @@ if (!isset($_SESSION["mikhmon"])) {
   <div class="input-group-4 col-box-4">
     <select style="padding:5px;" class="group-item group-item-r" id="comment" name="comment" onchange="location = './?hotspot=users&comment='+ this.value +'&session=<?= $session;?>';">
     <?php
-    if ($comm != "") {
-    } else {
-      echo "<option value=''>".$_comment."</option>";
-    }
-    $TotalReg = count($getuser);
-    for ($i = 0; $i < $TotalReg; $i++) {
-      $ucomment = $getuser[$i]['comment'];
-      $uprofile = $getuser[$i]['profile'];
-      $acomment .= ",".$ucomment."#". $uprofile;
-    }
+    echo "<option value=''>".$_comment."</option>";
 
-    $ocomment=  explode(",",$acomment);
-    
-    $comments=array_count_values($ocomment) ;
-    foreach ($comments as $tcomment=>$value) {
-
-      if (is_numeric(substr($tcomment, 3, 3))) {
-       
-        echo "<option value='" . explode("#",$tcomment)[0] . "' >". explode("#",$tcomment)[0]." ".explode("#",$tcomment)[1]. " [".$value. "]</option>";
-       }
- 
+    foreach ($comment_group as $tcomment => $value) {
+        if (is_numeric(substr($tcomment, 3, 3))) {
+            $label = $tcomment . " " . $value['profile'] . " [" . $value['count'] . "]";
+            echo Html::option($tcomment, $label, $comm);
+        }
     }
 
     ?>
@@ -266,4 +259,4 @@ for ($i = 0; $i < $TotalReg; $i++) {
 </div>
 
 	
-	
+

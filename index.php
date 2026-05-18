@@ -17,7 +17,7 @@
  */
 session_start();
 // hide all error
-error_reporting(0);
+//error_reporting(0);
 // check url
 
 ob_start("ob_gzhandler");
@@ -28,6 +28,17 @@ $url = $_SERVER['REQUEST_URI'];
 // load session MikroTik
 
 $session = $_GET['session'];
+
+spl_autoload_register(function($class_name) {
+    // Base directory for the namespace prefix
+    $baseDir = __DIR__ . '/';
+    $file = $baseDir . str_replace('\\', '/', $class_name) . '.php';
+    error_log("LOAD CLASS ".$file);
+    if (file_exists($file)){
+        error_log("LOAD CLASS EXISTS");
+        include $file;
+    }
+});
 
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:./admin.php?id=login");
