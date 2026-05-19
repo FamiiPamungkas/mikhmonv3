@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use classes\Html;
+
 // hide all error
 error_reporting(0);
 ini_set('max_execution_time', 300);
@@ -24,53 +26,21 @@ if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
 
-  if ($prof == "all") {
-    $getuser = $API->comm("/ip/hotspot/user/print");
+    require_once 'helper-methods.php';
+
+    $params = [];
+    if (!$prof) $prof = "all";
+    if ($prof != "all") $params["?profile"] = "$prof";
+    if ($comm != "") $params["?comment"] = "$comm";
+
+    $getuser = RouterosAPI::getInstance()->comm("/ip/hotspot/user/print", $params);
     $TotalReg = count($getuser);
 
-    $counttuser = $API->comm("/ip/hotspot/user/print", array(
-      "count-only" => ""
-    ));
+    $getprofile = RouterosAPI::getInstance()->comm("/ip/hotspot/user/profile/print");
+    $TotalReg2 = count($getprofile);
 
-  } elseif ($prof != "all") {
-    $getuser = $API->comm("/ip/hotspot/user/print", array(
-      "?profile" => "$prof",
-    ));
-    $TotalReg = count($getuser);
+    $comment_group = get_comment_group($prof);
 
-    $counttuser = $API->comm("/ip/hotspot/user/print", array(
-      "count-only" => "",
-      "?profile" => "$prof",
-    ));
-
-  }
-  if ($comm != "") {
-    $getuser = $API->comm("/ip/hotspot/user/print", array(
-      "?comment" => "$comm",
-    //"?uptime" => "00:00:00"
-    ));
-    $TotalReg = count($getuser);
-
-    $counttuser = $API->comm("/ip/hotspot/user/print", array(
-      "count-only" => "",
-      "?comment" => "$comm",
-    ));
-    
-  }
-  $exp = $_GET['exp'];
-  if ($exp != "") {
-    $getuser = $API->comm("/ip/hotspot/user/print", array(
-      "?limit-uptime" => "1s",
-    ));
-    
-    $counttuser = $API->comm("/ip/hotspot/user/print", array(
-      "count-only" => "",
-      "?limit-uptime" => "1s",
-    ));
-    
-  }
-  $getprofile = $API->comm("/ip/hotspot/user/profile/print");
-  $TotalReg2 = count($getprofile);
 }
 ?>
 
@@ -80,10 +50,6 @@ if (!isset($_SESSION["mikhmon"])) {
 <div class="card-header">
     <h3><i class="fa fa-users"></i> <?= $_users ?>
       <span style="font-size: 14px">
-        <?php
-        if ($counttuser == 0) {
-          echo "<script>window.location='./?hotspot=users&profile=all&session=" . $session . "</script>";
-        } ?>
          &nbsp; | &nbsp; <a href="./?hotspot-user=add&session=<?= $session; ?>" title="Add User"><i class="fa fa-user-plus"></i> <?= $_add ?></a>
         &nbsp; | &nbsp; <a href="./?hotspot-user=generate&session=<?= $session; ?>" title="Generate User"><i class="fa fa-users"></i> <?= $_generate ?></a>
          &nbsp; | &nbsp; <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=script" title="Download User List as Mikrotik Script"><i class="fa fa-download"></i> Script</a>&nbsp; | &nbsp; <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=csv" title="Download User List as CSV"><i class="fa fa-download"></i> CSV</a>
@@ -97,48 +63,30 @@ if (!isset($_SESSION["mikhmon"])) {
    <div class="col-6 pd-t-5 pd-b-5">
   <div class="input-group">
     <div class="input-group-4 col-box-4">
-      <input id="filterTable" type="text" style="padding:5.8px;" class="group-item group-item-l" placeholder="<?= $_search ?>">
+        <input id="filterTable" type="text" style="height: 30px" class="group-item group-item-l" placeholder="<?= $_search ?>">
     </div>
     <div class="input-group-4 col-box-4">
-      <select style="padding:5px;" class="group-item group-item-m" onchange="location = this.value; loader()" title="Filter by Profile">
-        <option><?= $_profile ?> </option>
-        <option value="./?hotspot=users&profile=all&session=<?= $session; ?>"><?= $_show_all ?></option>
-      <?php
-      for ($i = 0; $i < $TotalReg2; $i++) {
-        $profile = $getprofile[$i];
-        echo "<option value='./?hotspot=users&profile=" . $profile['name'] . "&session=" . $session . "'>" . $profile['name'] . "</option>";
-      }
-      ?>
-    </select>
+        <select class="group-item group-item-m" name="profile" onchange="refreshPage(true)" title="Filter by Profile">
+            <?php echo Html::option("all", "- all -", $prof); ?>
+            <?php
+            foreach ($getprofile as $p) {
+                echo Html::option($p['name'], $p['name'], $prof);
+            }
+            ?>
+        </select>
   </div>
   <div class="input-group-4 col-box-4">
-    <select style="padding:5px;" class="group-item group-item-r" id="comment" name="comment" onchange="location = './?hotspot=users&comment='+ this.value +'&session=<?= $session;?>';">
-    <?php
-    if ($comm != "") {
-    } else {
-      echo "<option value=''>".$_comment."</option>";
-    }
-    $TotalReg = count($getuser);
-    for ($i = 0; $i < $TotalReg; $i++) {
-      $ucomment = $getuser[$i]['comment'];
-      $uprofile = $getuser[$i]['profile'];
-      $acomment .= ",".$ucomment."#". $uprofile;
-    }
-
-    $ocomment=  explode(",",$acomment);
-    
-    $comments=array_count_values($ocomment) ;
-    foreach ($comments as $tcomment=>$value) {
-
-      if (is_numeric(substr($tcomment, 3, 3))) {
-       
-        echo "<option value='" . explode("#",$tcomment)[0] . "' >". explode("#",$tcomment)[0]." ".explode("#",$tcomment)[1]. " [".$value. "]</option>";
-       }
- 
-    }
-
-    ?>
-    </select>
+      <select class="group-item group-item-r" id="comment" name="comment" onchange="refreshPage()">
+          <?php echo Html::option("", "- all -", $comm); ?>
+          <?php
+          foreach ($comment_group as $tcomment => $value) {
+              if (is_numeric(substr($tcomment, 3, 3))) {
+                  $label = $tcomment . " " . $value['profile'] . " [" . $value['count'] . "]";
+                  echo Html::option($tcomment, $label, $comm);
+              }
+          }
+          ?>
+      </select>
   </div>
   </div>
   </div>
@@ -264,6 +212,21 @@ for ($i = 0; $i < $TotalReg; $i++) {
 </div>
 </div>
 </div>
+<script>
+
+    const session = '<?= $session;?>'
+
+    function refreshPage(resetComment) {
+        const comment = $("[name=comment]").val();
+        const profile = $("[name=profile]").val();
+
+        const params = new URLSearchParams();
+        if (profile) params.set('profile', profile);
+        if (comment && !resetComment) params.set('comment', comment);
+
+        window.location = `./?hotspot=users&session=${session}&${params.toString()}`;
+    }
+</script>
 
 	
-	
+

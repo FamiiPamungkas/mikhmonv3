@@ -15,9 +15,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-session_start();
-// hide all error
-error_reporting(0);
+
+use classes\Html;
+
+require_once __DIR__.'/../init.php';
 
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
@@ -264,21 +265,10 @@ include('./info.php');
     ?>
   </select>
   <select class="connect optfa ses text-right mr-t-10 pd-5">
-    <option id="MikhmonSession" value="<?= $session; ?>"><?= $hotspotname; ?></option>
-      <?php
-      foreach (file('./include/config.php') as $line) {
-        $sesname = explode("'", $line)[1];
-        if ($sesname == "" || $sesname== "mikhmon") {
-        } else {
-        if($sesname == $session){
-          echo '<option value="' . $sesname. '">'.$sesname. ' &#x2666;</option>';
-        }else{
-          echo '<option value="' . $sesname. '">'.$sesname. '</option>';
-        }
-        }
-      }
-      ?>
-    
+      <?php foreach (session_list() as $s) {
+          $label = $s == $session ? $s . ' &#x2666;' : $s;
+          echo Html::option($s, $label, $session);
+      } ?>
   </select>
   <a title="Idle Timeout" style="<?= $didleto; ?>"><span style="width:70px;" class="pd-5 radius-3"><i class="fa fa-clock-o mr-1"></i>  <span class="mr-1" id="timer"></span></span></a>
 </div>
