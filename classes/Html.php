@@ -24,7 +24,6 @@ class Html
      */
     public static function option($value, $label, $selected_value = ''): string
     {
-        error_log("=== RENDER OPTION");
         return '<option value="' . $value . '" ' . self::option_selected($value, $selected_value) . '>' . $label . '</option>';
     }
 

@@ -29,6 +29,29 @@ class RouterosAPI
     var $error_no;          //  Variable for storing connection error number, if any
     var $error_str;         //  Variable for storing connection error text, if any
 
+    static private $instance;
+
+    /**
+     * singleton
+     * @return RouterosAPI
+     */
+    public static function getInstance(): RouterosAPI
+    {
+        if (self::$instance == null) {
+            self::$instance = new RouterosAPI();
+
+            $config = session_config($_GET['session']);
+
+            $host = explode('!', $config[1])[1];
+            $user = explode('@|@', $config[2])[1];
+            $password = explode('#|#', $config[3])[1];
+
+            self::$instance->debug = false;
+            self::$instance->connect($host, $user, decrypt($password));
+        }
+        return self::$instance;
+    }
+
     /* Check, can be var used in foreach  */
     public function isIterable($var)
     {
@@ -498,7 +521,7 @@ if(strlen($dtm) == "2" && substr($dtm, -1) == "s"){
     $format = $day." 0".substr($dtm, 0,-1).":00:00";
 }elseif(strlen($dtm) == "3" && substr($dtm, -1) == "h"){
     $format = $day." ".substr($dtm, 0,-1).":00:00";
- 
+
 //minutes -secs
 }elseif(strlen($dtm) == "4" && substr($dtm, -1) == "s" && substr($dtm,1,-2) == "m"){
     $format = $day." "."00:0".substr($dtm, 0,1).":0".substr($dtm, 2,-1);

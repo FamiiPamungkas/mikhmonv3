@@ -15,28 +15,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-session_start();
-// hide all error
-error_reporting(0);
+
+require_once __DIR__.'/../init.php';
 if (substr($_SERVER["REQUEST_URI"], -11) == "readcfg.php") {
     header("Location:./");
-};
-// read config
+}
 
-$iphost = explode('!', $data[$session][1])[1];
-$userhost = explode('@|@', $data[$session][2])[1];
-$passwdhost = explode('#|#', $data[$session][3])[1];
-$hotspotname = explode('%', $data[$session][4])[1];
-$dnsname = explode('^', $data[$session][5])[1];
-$currency = explode('&', $data[$session][6])[1];
-$areload = explode('*', $data[$session][7])[1];
-$iface = explode('(', $data[$session][8])[1];
-$infolp = explode(')', $data[$session][9])[1];
-$idleto = explode('=', $data[$session][10])[1];
-$sesname = explode('+', $data[$session][10])[1];
-$useradm = explode('<|<', $data['mikhmon'][1])[1];
-$passadm = explode('>|>', $data['mikhmon'][2])[1];
-$livereport = explode('@!@', $data[$session][11])[1];
+$iphost = session_data("iphost");
+$userhost = session_data("userhost");
+$passwdhost = session_data("passwdhost");
+$hotspotname = session_data("hotspotname");
+$dnsname = session_data("dnsname");
+$currency = session_data("currency");
+$areload = session_data("areload");
+$iface = session_data("iface");
+$infolp = session_data("infolp");
+$idleto = session_data("idleto");
+$sesname = session_data("sesname");
+$useradm = session_data("useradm");
+$passadm = session_data("passadm");
+$livereport = session_data("livereport");
 
 $cekindo['indo'] = array(
     'RP', 'Rp', 'rp', 'IDR', 'idr', 'RP.', 'Rp.', 'rp.', 'IDR.', 'idr.',

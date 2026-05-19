@@ -5,7 +5,7 @@ return [
             "prefix" => "4j",
             "user_length" => 4,
             "pass_length" => 4,
-            "hotspot_profile" => "test",
+            "hotspot_profile" => "voucher-harian",
             "time_limit" => "4h",
             "price" => "Rp 2.000",
         ],
@@ -19,7 +19,7 @@ return [
         ],
         "1.B.R" => [
             "prefix" => "",
-            "user_length" => 3,
+            "user_length" => 4,
             "pass_length" => 4,
             "hotspot_profile" => "voucher-bulanan",
             "time_limit" => "30d",

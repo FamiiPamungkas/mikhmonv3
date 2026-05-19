@@ -1,22 +1,22 @@
 <?php
 
-function get_comment_group($users): array
+function get_comment_group($profile = ""): array
 {
-    error_log("=== GET COMMENT GROUP " . count($users));
+    $users = RouterosAPI::getInstance()->comm(
+        "/ip/hotspot/user/print", $profile == "all" ? [] : ["?profile" => "$profile"]
+    );
 
     $comment_group = [];
-    foreach ($users as $u) {
-        $comment = $u['comment'];
+    foreach ($users as $user) {
+        $comment = $user['comment'];
 
         $current_count = 0;
         if ($comment_group[$comment]['count']) {
             $current_count = $comment_group[$comment]['count'];
         }
 
-        $comment_group[$comment]['profile'] = $u['profile'];
+        $comment_group[$comment]['profile'] = $user['profile'];
         $comment_group[$comment]['count'] = $current_count + 1;
     }
-
-    error_log("=== FINISH COMMENT GROUP");
     return $comment_group;
 }
