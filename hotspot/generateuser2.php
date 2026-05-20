@@ -106,7 +106,7 @@ if (!isset($_SESSION["mikhmon"])) {
             <select class="form-control" id="uprofile" name="uprofile" required="required" onchange="setPrefix(this)">
                 <option value="">- Select Below -</option>
                 <?php foreach ($profiles as $k=>$v) { ?>
-                    <option value="<?= $k ?>" data-prefix="<?= $v['prefix'] ?>"><?= $k ?></option>
+                    <option value="<?= $k ?>" data-prefix="<?= $v['prefix'] ?>"><?= $v['label'] ?></option>
                 <?php } ?>
             </select>
         </td>
