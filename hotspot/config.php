@@ -6,7 +6,7 @@ return [
             "prefix" => "5j",
             "user_length" => 4,
             "pass_length" => 4,
-            "time_limit" => "5h",
+            "time_limit" => "5m",
             "price" => "2000",
         ],
         "1.H.R" => [
@@ -14,7 +14,7 @@ return [
             "prefix" => "4j",
             "user_length" => 4,
             "pass_length" => 4,
-            "time_limit" => "4h",
+            "time_limit" => "4m",
             "price" => "4000",
         ],
         "1.B.R" => [

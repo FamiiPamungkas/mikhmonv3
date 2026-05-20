@@ -23,8 +23,21 @@ ob_start("ob_gzhandler");
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
-  
-  date_default_timezone_set($_SESSION['timezone']);
+
+    date_default_timezone_set($_SESSION['timezone']);
+
+    function render_template($template, $vars = [])
+    {
+        foreach ($vars as $key => $value) {
+            $template = str_replace(
+                '{' . $key . '}',
+                $value,
+                $template
+            );
+        }
+
+        return $template;
+    }
   
     // load session MikroTik
   $session = $_GET['session'];
@@ -95,107 +108,20 @@ if (!isset($_SESSION["mikhmon"])) {
   }
 
 }
-?>
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Voucher-<?= $hotspotname . "-" . $getuprofile . "-" . $id; ?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta http-equiv="pragma" content="no-cache" />
-		<link rel="icon" href="../img/favicon.png" />
-		<script src="../js/qrious.min.js"></script>
-		<style>
-body {
-  color: #000000;
-  background-color: #FFFFFF;
-  font-size: 14px;
-  font-family:  'Helvetica', arial, sans-serif;
-  margin: 0px;
-  -webkit-print-color-adjust: exact;
-}
-table.voucher {
-  display: inline-block;
-  border: 2px solid black;
-  margin: 2px;
-}
-@page
-{
-  size: auto;
-  margin-left: 7mm;
-  margin-right: 3mm;
-  margin-top: 9mm;
-  margin-bottom: 3mm;
-}
-@media print
-{
-  table { page-break-after:auto }
-  tr    { page-break-inside:avoid; page-break-after:auto }
-  td    { page-break-inside:avoid; page-break-after:auto }
-  thead { display:table-header-group }
-  tfoot { display:table-footer-group }
-}
-#num {
-  float:right;
-  display:inline-block;
-}
-.qrc {
-  width:30px;
-  height:30px;
-  margin-top:1px;
-}
-		</style>
-	</head>
-	<body onload="">
-    <div>
 
+$templates = require 'template-new.php';
+$template = $templates["default"];
+echo base64_decode($template['header']);
 
-<?php for ($i = 0; $i < $TotalReg; $i++) {;
-  $regtable = $getuser[$i];
-  $uid = str_replace("=","",base64_encode($regtable['.id']));
-  $idqr = str_replace("=","",base64_encode(($regtable['.id']."qr")));
-  $username = $regtable['name'];
-  $password = $regtable['password'];
-  $profile = $regtable['profile'];
-  $timelimit = $regtable['limit-uptime'];
-  $getdatalimit = $regtable['limit-bytes-total'] ?? "";
-  $comment = $regtable['comment'];
-  if ($getdatalimit == 0) {
-    $datalimit = "";
-  } else {
-    $datalimit = formatBytes($getdatalimit, 2);
-  }
+for ($i = 0; $i < $TotalReg; $i++) {
+    $regtable = $getuser[$i];
 
-  $urilogin = "http://$dnsname/login?username=$username&password=$password";
-  $qrcode = "
-	<canvas class='qrcode' id='".$uid."'></canvas>
-    <script>
-      (function() {
-        var ".$uid." = new QRious({
-          element: document.getElementById('".$uid."'),
-          value: '".$urilogin."',
-          size:'256'
-        });
-
-      })();
-    </script>
-	";
-
-  $num = $i + 1;
-  ?>
-<?php
-if ($userp != "") {
-  include('./template-thermal.php');
-} else {
-  if ($small == "yes") {
-    include('./template-small.php');
-  } else {
-    include('./template.php');
-  }
+    echo render_template(base64_decode($template['row']), [
+        'profile' => $regtable['profile'],
+        'username' => $regtable['name'],
+        'password' => $regtable['password'],
+        'price' => $getprice,
+    ]);
 }
-?>
-<?php
-} ?>
 
-    </div>
-</body>
-</html>
+echo base64_decode($template["footer"]);

@@ -112,21 +112,22 @@ if (!isset($_SESSION["mikhmon"])) {
   <button class="btn bg-red" onclick="if(confirm('Are you sure to delete users?')){loadpage('./?remove-hotspot-user-expired=1&session=<?= $session; ?>');loader();}else{}" title="Remove user expired">  <i class="fa fa-trash"></i> Expired Users</button>
       <?php } ?>
   <script>
-    function printV(a,b){
-    var comm = document.getElementById('comment').value;
-    var url = "./voucher/print.php?id="+comm+"&"+a+"="+b+"&session=<?= $session; ?>";
-    if (comm === "" ){
-      <?php if ($currency == in_array($currency, $cekindo['indo'])) { ?>
-      alert('Silakan pilih salah satu Comment terlebih dulu!');
-      <?php
-    } else { ?>
-      alert('Please choose one of the Comments first!');
-      <?php
-    } ?>
-    }else{
-      var win = window.open(url, '_blank');
-      win.focus();
-    }}
+      function printV(a, b) {
+          var comm = document.getElementById('comment').value;
+          var url = "./voucher/print-new.php?id=" + comm + "&" + a + "=" + b + "&session=<?= $session; ?>";
+          if (comm === "") {
+              <?php if ($currency == in_array($currency, $cekindo['indo'])) { ?>
+              alert('Silakan pilih salah satu Comment terlebih dulu!');
+              <?php
+              } else { ?>
+              alert('Please choose one of the Comments first!');
+              <?php
+              } ?>
+          } else {
+              var win = window.open(url, '_blank');
+              win.focus();
+          }
+      }
   </script>
   <button class="btn bg-primary" title='Print' onclick="printV('qr','no');"><i class="fa fa-print"></i> <?= $_print_default ?></button>
   <button class="btn bg-primary" title='Print QR' onclick="printV('qr','yes');"><i class="fa fa-print"></i> <?= $_print_qr ?></button>
