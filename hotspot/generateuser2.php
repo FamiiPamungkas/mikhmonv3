@@ -15,12 +15,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-session_start();
-// hide all error
-error_reporting(0);
+
+require_once __DIR__ . '/../init.php';
+require_once __DIR__ . '/utils.php';
 
 ini_set('max_execution_time', 300);
-require_once __DIR__ . '/../user-manager/utils.php';
 
 if (!isset($_SESSION["mikhmon"])) {
 	header("Location:../admin.php?id=login");
@@ -28,8 +27,7 @@ if (!isset($_SESSION["mikhmon"])) {
     // time zone
     date_default_timezone_set($_SESSION['timezone']);
 
-	$srvlist = $API->comm("/ip/hotspot/print");
-    $profiles = userman("profiles");
+    $profiles = hotspot_config("profiles");
 
 	if (isset($_POST['qty'])) {
 		$qty = ($_POST['qty']);
@@ -43,8 +41,8 @@ if (!isset($_SESSION["mikhmon"])) {
 		}
 
         $config = $profiles[$profile];
-		$getprofile = $API->comm("/ip/hotspot/user/profile/print", array("?name" => $config['hotspot_profile']));
-        $hotspot_profile = $config['hotspot_profile'];
+		$getprofile = RouterosAPI::getInstance()->comm("/ip/hotspot/user/profile/print", array("?name" => $profile));
+        $hotspot_profile = $profile;
         if (!$getprofile){
             $hotspot_profile = "default";
         }
@@ -60,7 +58,7 @@ if (!isset($_SESSION["mikhmon"])) {
 			}
 
 			for ($i = 1; $i <= $qty; $i++) {
-				$API->comm("/ip/hotspot/user/add", array(
+                RouterosAPI::getInstance()->comm("/ip/hotspot/user/add", array(
 					"server" => "all",
 					"name" => "$u[$i]",
 					"password" => "$p[$i]",

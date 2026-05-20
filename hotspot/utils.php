@@ -1,6 +1,6 @@
 <?php
 
-function userman(string $key = null, $default = null)
+function hotspot_config(string $key = null, $default = null)
 {
     static $config = null;
 
