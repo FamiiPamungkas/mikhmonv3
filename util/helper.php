@@ -58,3 +58,11 @@ function session_list(): array
 
     return $session_list;
 }
+
+function get_parameter($name, $default = "")
+{
+    if (isset($_GET[$name])){
+        return $_GET[$name];
+    }
+    return $default;
+}

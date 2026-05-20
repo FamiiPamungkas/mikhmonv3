@@ -13,7 +13,7 @@ return [
             "user_length" => 4,
             "pass_length" => 4,
             "time_limit" => "4h",
-            "price" => "2000",
+            "price" => "4000",
         ],
         "1.B.R" => [
             "prefix" => "",
