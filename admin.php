@@ -138,10 +138,6 @@ if ($id == "login" || substr($url, -1) == "p") {
 } elseif ($id == "uplogo"  && !empty($session)) {
   include_once('./include/menu.php');
   include_once('./settings/uplogo.php');
-} elseif ($id == "reboot"  && !empty($session)) {
-  include_once('./process/reboot.php');
-} elseif ($id == "shutdown"  && !empty($session)) {
-  include_once('./process/shutdown.php');
 } elseif ($id == "remove-session" && $session != "") {
   include_once('./include/menu.php');
   $fc = file("./include/config.php" );

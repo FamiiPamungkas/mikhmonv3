@@ -328,8 +328,8 @@ include('./info.php');
   </div>
   <div class="dropdown-container <?= $schmenu; ?>">
     <a href="./?system=scheduler&session=<?= $session; ?>" class="<?= $ssch; ?>"> <i class="fa fa-clock-o "></i> <?= $_system_scheduler ?> </a>
-    <a href="./admin.php?id=reboot&session=<?= $session; ?>" class=""> <i class="fa fa-power-off "></i> <?= $_system_reboot ?> </a>            
-    <a href="./admin.php?id=shutdown&session=<?= $session; ?>" class=""> <i class="fa fa-power-off "></i> <?= $_system_off ?> </a> 
+<!--    <a href="./admin.php?id=reboot&session=--><?php //= $session; ?><!--" class=""> <i class="fa fa-power-off "></i> --><?php //= $_system_reboot ?><!-- </a>            -->
+<!--    <a href="./admin.php?id=shutdown&session=--><?php //= $session; ?><!--" class=""> <i class="fa fa-power-off "></i> --><?php //= $_system_off ?><!-- </a> -->
   </div>
   <!--dhcp leases-->
   <a href="./?hotspot=dhcp-leases&session=<?= $session; ?>" class="menu <?= $slease; ?>"><i class=" fa fa-sitemap"></i> <?= $_dhcp_leases ?></a>
