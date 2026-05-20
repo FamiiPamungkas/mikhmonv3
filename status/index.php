@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// hide all error
-error_reporting(0);
+require_once __DIR__ . '/../init.php';
+
 ob_start("ob_gzhandler");
 
 $session = $_GET['session'];
@@ -28,12 +28,12 @@ include('../include/config.php');
 // theme  
 include('../include/theme.php');
 
-$iphost = explode('!', $data[$session][1])[1];
-$userhost = explode('@|@', $data[$session][2])[1];
-$passwdhost = explode('#|#', $data[$session][3])[1];
-$hotspotname = explode('%', $data[$session][4])[1];
-$dnsname = explode('^', $data[$session][5])[1];
-$currency = explode('&', $data[$session][6])[1];
+$iphost = session_data("iphost");
+$userhost = session_data("userhost");
+$passwdhost = session_data("passwdhost");
+$hotspotname = session_data("hotspotname");
+$dnsname = session_data("dnsname");
+$currency = session_data("currency");
 
 $cekindo['indo'] = array('RP', 'Rp', 'rp', 'IDR', 'idr', 'RP.', 'Rp.', 'rp.', 'IDR.', 'idr.', );
 

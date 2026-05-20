@@ -18,8 +18,8 @@
 
 use classes\Html;
 
-// hide all error
-error_reporting(0);
+require_once __DIR__.'/../init.php';
+
 ini_set('max_execution_time', 300);
 
 if (!isset($_SESSION["mikhmon"])) {
@@ -27,17 +27,31 @@ if (!isset($_SESSION["mikhmon"])) {
 } else {
 
     require_once 'helper-methods.php';
+    require_once 'utils.php';
+
+    $cfg_profiles = hotspot_config("profiles");
 
     $params = [];
     if (!$prof) $prof = "all";
     if ($prof != "all") $params["?profile"] = "$prof";
     if ($comm != "") $params["?comment"] = "$comm";
 
+    $filtered_users = [];
     $getuser = RouterosAPI::getInstance()->comm("/ip/hotspot/user/print", $params);
+    foreach ($getuser as $u) {
+        $exists = false;
+        foreach ($cfg_profiles as $k=>$v) {
+            if ($u['profile']===$k){
+                $exists = true;
+            }
+        }
+        if ($exists) $filtered_users[] = $u;
+    }
+
+    $getuser = $filtered_users;
     $TotalReg = count($getuser);
 
     $getprofile = RouterosAPI::getInstance()->comm("/ip/hotspot/user/profile/print");
-    $TotalReg2 = count($getprofile);
 
     $comment_group = get_comment_group($prof);
 
@@ -116,14 +130,14 @@ if (!isset($_SESSION["mikhmon"])) {
   </script>
   <button class="btn bg-primary" title='Print' onclick="printV('qr','no');"><i class="fa fa-print"></i> <?= $_print_default ?></button>
   <button class="btn bg-primary" title='Print QR' onclick="printV('qr','yes');"><i class="fa fa-print"></i> <?= $_print_qr ?></button>
-  <button class="btn bg-primary" title='Print Small'onclick="printV('small','yes');"><i class="fa fa-print"></i> <?= $_print_small ?></button>
+  <button class="btn bg-primary" title='Print Small' onclick="printV('small','yes');"><i class="fa fa-print"></i> <?= $_print_small ?></button>
   </div>
 </div>
 <div class="overflow mr-t-10 box-bordered" style="max-height: 75vh">
 <table id="dataTable" class="table table-bordered table-hover text-nowrap">
   <thead>
   <tr>
-    <th style="min-width:50px;" class="align-middle text-center" id="cuser"><?= $counttuser; ?></th>
+    <th style="min-width:50px;" class="align-middle text-center" id="cuser"><?= $TotalReg; ?></th>
     <th style="min-width:50px;" class="pointer" title="Click to sort"><i class="fa fa-sort"></i> Server</th>
     <th class="pointer" title="Click to sort"><i class="fa fa-sort"></i> <?= $_name ?></th>
     <th>Print</th>
