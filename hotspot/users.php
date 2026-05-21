@@ -29,6 +29,8 @@ if (!isset($_SESSION["mikhmon"])) {
     require_once 'helper-methods.php';
     require_once 'utils.php';
 
+    $exp = get_parameter("exp");
+
     $cfg_profiles = hotspot_config("profiles");
 
     $params = [];
@@ -41,7 +43,7 @@ if (!isset($_SESSION["mikhmon"])) {
     foreach ($getuser as $u) {
         $exists = false;
         foreach ($cfg_profiles as $k=>$v) {
-            if ($u['profile']===$k){
+            if (isset($u['profile']) && $u['profile']===$k){
                 $exists = true;
             }
         }
@@ -81,7 +83,7 @@ if (!isset($_SESSION["mikhmon"])) {
     </div>
     <div class="input-group-4 col-box-4">
         <select class="group-item group-item-m" name="profile" onchange="refreshPage(true)" title="Filter by Profile">
-            <?php echo Html::option("all", "- all -", $prof); ?>
+            <?php echo Html::option("all", "- all profile -", $prof); ?>
             <?php
             foreach ($getprofile as $p) {
                 echo Html::option($p['name'], $p['name'], $prof);
@@ -91,7 +93,7 @@ if (!isset($_SESSION["mikhmon"])) {
   </div>
   <div class="input-group-4 col-box-4">
       <select class="group-item group-item-r" id="comment" name="comment" onchange="refreshPage()">
-          <?php echo Html::option("", "- all -", $comm); ?>
+          <?php echo Html::option("", "- all comment -", $comm); ?>
           <?php
           foreach ($comment_group as $tcomment => $value) {
               if (is_numeric(substr($tcomment, 3, 3))) {
@@ -104,36 +106,15 @@ if (!isset($_SESSION["mikhmon"])) {
   </div>
   </div>
   </div>
- 
-  <div class="col-6">
-    <?php if ($comm != "") { ?>
-  <button class="btn bg-red" onclick="if(confirm('Are you sure to delete username by comment (<?= $comm; ?>)?')){loadpage('./?remove-hotspot-user-by-comment=<?= $comm; ?>&session=<?= $session; ?>');loader();}else{}" title="Remove user by comment <?= $comm; ?>">  <i class="fa fa-trash"></i> <?= $_by_comment ?></button>
-    <?php ; }else if ($exp == "1"){ ?>
-  <button class="btn bg-red" onclick="if(confirm('Are you sure to delete users?')){loadpage('./?remove-hotspot-user-expired=1&session=<?= $session; ?>');loader();}else{}" title="Remove user expired">  <i class="fa fa-trash"></i> Expired Users</button>
-      <?php } ?>
-  <script>
-      function printV(a, b) {
-          var comm = document.getElementById('comment').value;
-          var url = "./voucher/print-new.php?id=" + comm + "&" + a + "=" + b + "&session=<?= $session; ?>";
-          if (comm === "") {
-              <?php if ($currency == in_array($currency, $cekindo['indo'])) { ?>
-              alert('Silakan pilih salah satu Comment terlebih dulu!');
-              <?php
-              } else { ?>
-              alert('Please choose one of the Comments first!');
-              <?php
-              } ?>
-          } else {
-              var win = window.open(url, '_blank');
-              win.focus();
-          }
-      }
-  </script>
-  <button class="btn bg-primary" title='Print' onclick="printV('qr','no');"><i class="fa fa-print"></i> <?= $_print_default ?></button>
-  <button class="btn bg-primary" title='Print QR' onclick="printV('qr','yes');"><i class="fa fa-print"></i> <?= $_print_qr ?></button>
-  <button class="btn bg-primary" title='Print Small' onclick="printV('small','yes');"><i class="fa fa-print"></i> <?= $_print_small ?></button>
+      <div class="col-6">
+          <?php if ($comm != "") { ?>
+              <button class="btn bg-red" onclick="deleteUserByComment('<?= $session ?>','<?= $comm ?>')" title="Remove user by comment <?= $comm; ?>"><i class="fa fa-trash"></i> <?= $_by_comment ?></button>
+          <?php } else if ($exp == "1") { ?>
+              <button class="btn bg-red" onclick="deleteExpiredUsers('<?= $session ?>')" title="Remove user expired"><i class="fa fa-trash"></i> Expired Users</button>
+          <?php } ?>
+          <button class="btn bg-primary" title='Print' onclick="printVoucher('qr','no');"><i class="fa fa-print"></i> Print default</button>
+      </div>
   </div>
-</div>
 <div class="overflow mr-t-10 box-bordered" style="max-height: 75vh">
 <table id="dataTable" class="table table-bordered table-hover text-nowrap">
   <thead>
@@ -240,6 +221,31 @@ for ($i = 0; $i < $TotalReg; $i++) {
         if (comment && !resetComment) params.set('comment', comment);
 
         window.location = `./?hotspot=users&session=${session}&${params.toString()}`;
+    }
+
+    function printVoucher(a, b) {
+        const comm = document.getElementById('comment').value;
+        const url = "./voucher/print-new.php?id=" + comm + "&" + a + "=" + b + "&session=<?= $session; ?>";
+        if (comm === "") {
+            alert('Silakan pilih salah satu Comment terlebih dulu!');
+        } else {
+            const win = window.open(url, '_blank');
+            win.focus();
+        }
+    }
+
+    function deleteUserByComment(session, comment) {
+        if (confirm(`Are you sure to delete username by comment (${comment})?`)) {
+            loadpage(`./?remove-hotspot-user-by-comment=${comment}&session=${session}`);
+            loader();
+        }
+    }
+
+    function deleteExpiredUsers(session) {
+        if (confirm('Are you sure to delete users?')) {
+            loadpage(`./?remove-hotspot-user-expired=1&session=${session}`);
+            loader();
+        }
     }
 </script>
 

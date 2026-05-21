@@ -26,34 +26,21 @@ if (!isset($_SESSION["mikhmon"])) {
 
     date_default_timezone_set($_SESSION['timezone']);
 
-    function render_template($template, $vars = [])
-    {
-        foreach ($vars as $key => $value) {
-            $template = str_replace(
-                '{' . $key . '}',
-                $value,
-                $template
-            );
-        }
-
-        return $template;
-    }
-  
     // load session MikroTik
-  $session = $_GET['session'];
+    $session = get_parameter('session');
 
     // load config
-  include('../hotspot/utils.php');
-  include('../include/config.php');
-  include('../include/readcfg.php');
-  include('../lib/formatbytesbites.php');
+    include('utils.php');
+    include('../include/config.php');
+    include('../include/readcfg.php');
+    include('../lib/formatbytesbites.php');
 
-  $id = get_parameter('id');
-  $qr = get_parameter('qr');
-  $small = get_parameter('small');
-  $userp = get_parameter('user');
+    $id = get_parameter('id');
+    $qr = get_parameter('qr');
+    $small = get_parameter('small');
+    $userp = get_parameter('user');
 
-  require('../lib/routeros_api.class.php');
+    require('../lib/routeros_api.class.php');
 
     if ($userp != "") {
         $usermode = explode('-', $userp)[0];
@@ -69,7 +56,6 @@ if (!isset($_SESSION["mikhmon"])) {
         $getuser = RouterosAPI::getInstance()->comm("/ip/hotspot/user/print", array("?name" => "$user"));
         $TotalReg = count($getuser);
     } elseif ($id != "") {
-        $usermode = explode('-', $id)[0];
         $getuser =  RouterosAPI::getInstance()->comm('/ip/hotspot/user/print', array("?comment" => "$id", "?uptime" => "0s"));
         $TotalReg = count($getuser);
     }
@@ -82,41 +68,20 @@ if (!isset($_SESSION["mikhmon"])) {
 
     $validity = "";
     $getprice = $cfg_profile["price"] ?? "";
-    $getsprice = $cfg_profile["price"] ?? "";
-
-    if ($getsprice == "0" && $getprice != "0") {
-        if ($currency == in_array($currency, $cekindo['indo'])) {
-            $price = $currency . " " . number_format((float)$getprice, 0, ",", ".");
-        } else {
-            $price = $currency . " " . number_format((float)$getprice, 2);
-        }
-    } else if ($getsprice != "0") {
-        if ($currency == in_array($currency, $cekindo['indo'])) {
-            $price = $currency . " " . number_format((float)$getsprice, 0, ",", ".");
-        } else {
-            $price = $currency . " " . number_format((float)$getsprice, 2);
-        }
-    } else if ($getsprice == "0") {
-        $price = "";
-    }
-
-  $logo = "../img/logo-" . $session . ".png";
-  if (file_exists($logo)) {
-    $logo = "../img/logo-" . $session . ".png?t=". str_replace(" ","_",date("Y-m-d H:i:s"));
-  } else {
-    $logo = "../img/logo.png?t=". str_replace(" ","_",date("Y-m-d H:i:s"));
-  }
-
 }
 
 $templates = require 'template-new.php';
 $template = $templates["default"];
-echo base64_decode($template['header']);
+render_template($template['header'], [
+    "hotspotname" => $hotspotname,
+    "getuprofile" => $getuprofile,
+    "id" => $id
+]);
 
 for ($i = 0; $i < $TotalReg; $i++) {
     $regtable = $getuser[$i];
 
-    echo render_template(base64_decode($template['row']), [
+    render_template($template['row'], [
         'profile' => $regtable['profile'],
         'username' => $regtable['name'],
         'password' => $regtable['password'],
@@ -124,4 +89,4 @@ for ($i = 0; $i < $TotalReg; $i++) {
     ]);
 }
 
-echo base64_decode($template["footer"]);
+render_template($template["footer"]);

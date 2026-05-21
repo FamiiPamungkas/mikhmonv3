@@ -8,14 +8,15 @@ function get_comment_group($profile = ""): array
 
     $comment_group = [];
     foreach ($users as $user) {
-        $comment = $user['comment'];
+        $comment = $user['comment'] ?? "";
+        if (!$comment) continue;
 
         $current_count = 0;
-        if ($comment_group[$comment]['count']) {
+        if (isset($comment_group[$comment]) && $comment_group[$comment]['count']) {
             $current_count = $comment_group[$comment]['count'];
         }
 
-        $comment_group[$comment]['profile'] = $user['profile'];
+        $comment_group[$comment]['profile'] = $user['profile'] ?? "default";
         $comment_group[$comment]['count'] = $current_count + 1;
     }
     return $comment_group;

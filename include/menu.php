@@ -26,8 +26,9 @@ if (!isset($_SESSION["mikhmon"])) {
 
   include ('./include/version.php');
 
-  $btnmenuactive = "font-weight: bold;background-color: #f9f9f9; color: #000000";
-  if ($hotspot == "dashboard" || substr(end(explode("/", $url)), 0, 8) == "?session") {
+    $btnmenuactive = "font-weight: bold;background-color: #f9f9f9; color: #000000";
+    $url_segment = explode("/", $url);
+    if ($hotspot == "dashboard" || substr(end($url_segment), 0, 8) == "?session") {
     $shome = "active";
     $mpage = $_dashboard;
   } elseif ($hotspot == "quick-print" || $hotspot == "list-quick-print") {
@@ -170,7 +171,7 @@ if($idleto != "disable"){
 <span style="display:none;" id="idto"><?= $idleto ;?></span>
 
 
-<?php if ($id != "") { ?>
+<?php if (isset($id) && $id != "") { ?>
 
 <div id="navbar" class="navbar">
   <div class="navbar-left">
@@ -366,12 +367,12 @@ $(document).ready(function(){
 <div id="notify"><div class="message"></div></div>
 <div id="temp"></div>
 <?php 
-include('./include/info.php');
+//    include('./include/info.php');
 } ?>
 
 <div id="main">  
 <div id="loading" class="lds-dual-ring"></div>
-<?php if($hotspot == 'template-editor' || $id == 'editor'){
+<?php if($hotspot == 'template-editor' || (isset($id) && $id == 'editor')){
 echo '<div class="main-container">';
 }else{
   echo '<div class="main-container" style="display:none">';

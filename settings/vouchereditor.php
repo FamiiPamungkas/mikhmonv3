@@ -15,149 +15,187 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-session_start();
-?>
-<?php
-error_reporting(0);
+
+use classes\Html;
+use classes\VoucherTemplate;
+
+require_once __DIR__ . '/../init.php';
+
 if (!isset($_SESSION["mikhmon"])) {
 	header("Location:../admin.php?id=login");
 } else {
-// load session MikroTik
+    // load session MikroTik
 	$session = $_GET['session'];
 
-// load config
-include('../include/config.php');
-include('../include/readcfg.php');
+    // load config
+    require_once __DIR__ . '/../voucher/utils.php';
+    include(__DIR__.'/../include/config.php');
+    include(__DIR__.'/../include/readcfg.php');
 
+    $template_param = get_parameter("template");
 
+    $templates = VoucherTemplate::fetchAll();
+    $template_names = [];
+    $template = null;
+    /** @var $t VoucherTemplate */
+    foreach ($templates as $t) {
+        $template_names[] = $t->name;
+        if ($t->name === $template_param) $template = $t;
+    }
 
-$url = $_SERVER['REQUEST_URI'];
-$telplate = $_GET['template'];
-if ($telplate == "default" || $telplate == "rdefault") {
-	$telplatet = "template";
-	$popup = "javascript:window.open('./voucher/vpreview.php?usermode=up&qr=no&session=" . $session . "','_blank','width=310,height=310')";
-	$popupQR = "javascript:window.open('./voucher/vpreview.php?usermode=up&qr=yes&session=" . $session . "','_blank','width=310,height=310')";
-} elseif ($telplate == "thermal" || $telplate == "rthermal") {
-	$telplatet = "template-thermal";
-	$popup = "javascript:window.open('./voucher/vpreview.php?usermode=up&user=m&qr=no&session=" . $session . "','_blank','width=310,height=310')";
-	$popupQR = "javascript:window.open('./voucher/vpreview.php?usermode=up&user=m&qr=yes&session=" . $session . "','_blank','width=310,height=310')";
-} elseif ($telplate == "small" || $telplate == "rsmall") {
-	$telplatet = "template-small";
-	$popup = "javascript:window.open('./voucher/vpreview.php?usermode=up&small=yes&qr=no&session=" . $session . "','_blank','width=310,height=310')";
-	$popupQR = "javascript:window.open('./voucher/vpreview.php?usermode=up&small=yes&qr=yes&session=" . $session . "','_blank','width=310,height=310')";
-}
-if (isset($_POST['save'])) {
-	$template = './voucher/' . $telplatet . '.php';
-	$handle = fopen($template, 'w') or die('Cannot open file:  ' . $template);
+    $template_name = "";
+    $template_header = "";
+    $template_row = "";
+    $template_footer = "";
+    if ($template){
+        $template_header = $template->header;
+        $template_row = $template->row;
+        $template_footer = $template->footer;
+        $template_name = $template->name;
+    }
 
-	$data = ($_POST['editor']);
+    if (isset($_POST['save'])) {
 
-	fwrite($handle, $data);
-		
-		//header("Location:$url");
-}
+        $voucher = new VoucherTemplate($_POST);
+        $r = $voucher->saveOrUpdate();
+        echo "<script>window.location='./?hotspot=template-editor&template=".$voucher->name."&session=".$session."'</script>";
+
+    }
 
 }
 ?>
 <!-- Create a simple CodeMirror instance -->
 <link rel="stylesheet" href="./css/editor.min.css">
-<script src="./js/editor.min.js"></script>	
+<script src="./js/editor.min.js"></script>
 
 <style>
-.CodeMirror {
-  border: 1px solid #2f353a;
-  height: 505px;
-}
-textarea{
-  font-size:12px;
-  border: 1px solid #2f353a;
-}
+    .editor-wrapper.row > .CodeMirror{
+        height: 150px;
+
+    }
+    .CodeMirror {
+        border: 1px solid #2f353a;
+        height: 300px;
+    }
+    textarea{
+        font-size:12px;
+        border: 1px solid #2f353a;
+    }
+
+    .template-editor{
+        width:100%;
+    }
+
 </style>
-
-
-		<div class="row">
-	    	<div class="col-9">
-	    		<div class="card">
-					<div class="card-header">
-						<h3><i class="fa fa-edit"></i> <?= $_template_editor ?></h3>
-					</div>
-			<div class="card-body">
-				<form autocomplete="off" method="post" action="">
-					<table class="table">
-						<tr>
-							<td>
-							<div class="row">
-								<div class="col-4 col-box-12">
-								<button type="submit" title="Save template" class="btn bg-primary" name="save"><i class="fa fa-save"></i> <?= $_save ?></button>
-								<a class="btn bg-green" href="<?= $popup?>" title="View voucher with Logo"><i class="fa fa-image"></i> </a>
-								<a class="btn bg-green" href="<?= $popupQR?>" title="View voucher with  QR"><i class="fa fa-qrcode"></i> </a>
-								</div>
-								<div class="col-8 pd-t-5 pd-b-5 col-box-12">
-								<div class="input-group">
-            					<div class="input-group-3">
-            						<div class="group-item group-item-l pd-2p5 text-center">Template</div>
-            					</div>
-								<div class="input-group-3">
-									<select style="padding:4.2px;"  class="group-item group-item-m" onchange="window.location.href=this.value+'&session=<?= $session; ?>';">
-	    								<option><?= ucfirst($telplate); ?></option>
-	    								<option value="./admin.php?id=editor&template=default">Default</option>
-	    								<option value="./admin.php?id=editor&template=thermal">Thermal</option>
-	    								<option value="./admin.php?id=editor&template=small">Small</option>
-	    							</select>
-	    						</div>
-								
-								<div class="input-group-3">
-            						<div class="group-item group-item-m pd-2p5 text-center">Reset</div>
-            					</div>
-	    						<div class="input-group-3">
-	    							<select style="padding:4.2px;"  class="group-item group-item-r" onchange="window.location.href=this.value+'&session=<?= $session; ?>';">
-	    								<option><?= ucfirst($telplate); ?></option>
-	    								<option value="./admin.php?id=editor&template=rdefault">Default</option>
-	    								<option value="./admin.php?id=editor&template=rthermal">Thermal</option>
-	    								<option value="./admin.php?id=editor&template=rsmall">Small</option>
-	    							</select>
-	    						</div>
-								</div>
-								</div>
-							</div>
-	    					</td>
-						</tr>
-						</table>
-	        	<textarea class="bg-dark" id="editorMikhmon" name="editor" style="width:100%" height="700">
-						<?php if ($telplate == "default") {
-						echo file_get_contents('./voucher/template.php');
-					} elseif ($telplate == "thermal") {
-						echo file_get_contents('./voucher/template-thermal.php');
-					} elseif ($telplate == "small") {
-						echo file_get_contents('./voucher/template-small.php');
-					} elseif ($telplate == "rdefault") {
-						echo file_get_contents('./voucher/default.php');
-					} elseif ($telplate == "rthermal") {
-						echo file_get_contents('./voucher/default-thermal.php');
-					} elseif ($telplate == "rsmall") {
-						echo file_get_contents('./voucher/default-small.php');
-					} ?>
-	        </textarea>
-			</form>
-			</div>
-		</div>
-		</div>
-		<div class="col-3">
-			<div class="card">
-				<div class="card-header">
-					<h3>Variable</h3>
-				</div>
-			<div class="card-body">
+<div class="row">
+    <div class="col-9">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fa fa-edit"></i> <?= $_template_editor ?></h3>
+            </div>
+            <div class="card-body">
+                <form autocomplete="off" method="post" action="">
+                    <input type="hidden" name="id" value="<?= $template != null ? $template->id : 0 ?>">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-8 pd-t-5 pd-b-5 col-box-12">
+                                        <div class="input-group">
+                                            <div class="input-group-3">
+                                                <div class="group-item group-item-l pd-2p5 text-center" style="height: 30px">Template</div>
+                                            </div>
+                                            <div class="input-group-3">
+                                                <select class="group-item group-item-r" name="template" onchange="changeTemplate('<?= $session ?>')">
+                                                    <option value="">- new -</option>
+                                                    <?php foreach ($template_names as $t) { ?>
+                                                        <?= Html::option($t, $t, $template_param) ?>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 col-box-12">
+                                        <button type="submit" title="Save template" class="btn bg-primary" name="save"><i class="fa fa-save"></i> <?= $_save ?></button>
+                                        <a class="btn bg-green" onclick="openPreview('<?= $session ?>')" title="View voucher"><i class="fa fa-image"></i> Preview</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <label>
+                        Name :
+                        <input type="text" class="form-control" name="name" value="<?= $template_name ?>" <?= $template_name == "default" ? "readonly":"" ?>>
+                    </label>
+                    <div class="editor-wrapper">
+                        <label for="row-editor">Header :</label>
+                        <textarea id="header-editor" name="header" class="bg-dark template-editor" height="300"><?= $template_header ?></textarea>
+                    </div>
+                    <div class="editor-wrapper row">
+                        <label for="row-editor">Row :</label>
+                        <textarea id="row-editor" name="row" class="bg-dark template-editor" height="200px"><?= $template_row ?></textarea>
+                    </div>
+                    <div class="editor-wrapper">
+                        <label for="footer-editor">Footer :</label>
+                        <textarea id="footer-editor" name="footer" class="bg-dark template-editor" height="300px"><?= $template_footer ?></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="card">
+            <div class="card-header">
+                <h3>Variable</h3>
+            </div>
+            <div class="card-body">
 				<textarea id="var" class="bg-dark" readonly rows=39 style="width:100%" disabled>
 	        		<?= file_get_contents('./voucher/variable.php'); ?>
 	    		</textarea>
-			</div>
-			</div>
-		</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-var _0x5b73=["\x75\x6E\x64\x65\x66\x69\x6E\x65\x64","\x4D\x69\x6B\x68\x6D\x6F\x6E\x53\x65\x73\x73\x69\x6F\x6E","\x69\x6E\x6E\x65\x72\x48\x54\x4D\x4C","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x73\x65\x74\x49\x74\x65\x6D","\x50\x6C\x65\x61\x73\x65\x20\x75\x73\x65\x20\x47\x6F\x6F\x67\x6C\x65\x20\x43\x68\x72\x6F\x6D\x65","\x67\x65\x74\x49\x74\x65\x6D","\x6E\x75\x6C\x6C","","\x4D\x69\x6B\x68\x6D\x6F\x6E\x20\x62\x61\x6A\x61\x6B\x61\x6E\x21\x20\x3A\x29","\x65\x64\x69\x74\x6F\x72\x4D\x69\x6B\x68\x6D\x6F\x6E","\x61\x70\x70\x6C\x69\x63\x61\x74\x69\x6F\x6E\x2F\x78\x2D\x68\x74\x74\x70\x64\x2D\x70\x68\x70","\x74\x6F\x4D\x61\x74\x63\x68\x69\x6E\x67\x54\x61\x67","\x66\x72\x6F\x6D\x54\x65\x78\x74\x41\x72\x65\x61","\x74\x68\x65\x6D\x65","\x6D\x61\x74\x65\x72\x69\x61\x6C","\x73\x65\x74\x4F\x70\x74\x69\x6F\x6E"];if( typeof (Storage)!== _0x5b73[0]){sessionStorage[_0x5b73[4]](_0x5b73[1],document[_0x5b73[3]](_0x5b73[1])[_0x5b73[2]])}else {alert(_0x5b73[5])};var session=sessionStorage[_0x5b73[6]](_0x5b73[1]);if(session=== _0x5b73[7]|| session=== _0x5b73[8]){alert(_0x5b73[9])};var editor=CodeMirror[_0x5b73[13]](document[_0x5b73[3]](_0x5b73[10]),{lineNumbers:true,matchBrackets:true,mode:_0x5b73[11],indentUnit:4,indentWithTabs:true,lineWrapping:true,viewportMargin:Infinity,matchTags:{bothTags:true},extraKeys:{"\x43\x74\x72\x6C\x2D\x4A":_0x5b73[12]}});editor[_0x5b73[16]](_0x5b73[14],_0x5b73[15])
+
+    const editorConfig = {
+        lineNumbers: true,
+        matchBrackets: true,
+        mode: "application/x-httpd-php",
+        indentUnit: 4,
+        indentWithTabs: true,
+        lineWrapping: true,
+        viewportMargin: Infinity,
+        matchTags: {
+            bothTags: true
+        },
+        extraKeys: {
+            "Ctrl-J": "toMatchingTag"
+        }
+    }
+
+    const headerEditor = CodeMirror.fromTextArea(document.getElementById("header-editor"), editorConfig);
+    const rowEditor = CodeMirror.fromTextArea(document.getElementById("row-editor"), editorConfig);
+    const footerEditor = CodeMirror.fromTextArea(document.getElementById("footer-editor"), editorConfig);
+
+    headerEditor.setOption("theme", "material");
+    rowEditor.setOption("theme", "material");
+    footerEditor.setOption("theme", "material");
+
+    function openPreview(session) {
+        const templateEl = document.querySelector("[name='template']");
+        const template = templateEl.value;
+        window.open(`./voucher/voucher-preview.php?usermode=up&template=${template}&session=${session}`,'_blank','width=310,height=310')
+    }
+
+    function changeTemplate(session) {
+        const templateEl = document.querySelector("[name='template']");
+        const template = templateEl.value;
+
+        window.location = `./?hotspot=template-editor&template=${template}&session=${session}`
+    }
+
 </script>
 
 

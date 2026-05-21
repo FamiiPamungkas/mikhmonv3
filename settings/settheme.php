@@ -18,11 +18,11 @@
 
 require_once __DIR__.'/../init.php';
 
-error_reporting(0);
+// error_reporting(0);
 // check url
 $url2 = explode("&set-theme", $url)[0];
 
-$gettheme = $_GET['set-theme'];
+$gettheme = get_parameter("set-theme");
 $mtheme = array(
     "dark",
     "light",

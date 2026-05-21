@@ -1,6 +1,6 @@
 <?php
 
-$h = base64_encode(<<<'HTML'
+$template_header = base64_encode(<<<'HTML'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +8,8 @@ $h = base64_encode(<<<'HTML'
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="pragma" content="no-cache">
-    <title>Voucher-<?= $hotspotname . "-" . $getuprofile . "-" . $id; ?>"</title>
+    <title>Voucher-{hotspotname}-{getuprofile}-{id}</title>
+    <link rel="icon" href="../img/favicon.png" />
     <style>
         @page {
             size: auto;
@@ -110,6 +111,7 @@ $h = base64_encode(<<<'HTML'
             font-size: .7rem;
             margin: 3px;
             display: inline-block;
+            overflow: hidden;
         }
 
         .card .left-area {
@@ -130,6 +132,9 @@ $h = base64_encode(<<<'HTML'
             font-weight: bold;
         }
 
+        .card .left-area .duration {
+            color: gray;
+        }
         .card .left-area .currency {
             font-weight: bold;
         }
@@ -194,7 +199,7 @@ $h = base64_encode(<<<'HTML'
 HTML
 );
 
-$r = base64_encode(
+$template_row = base64_encode(
     <<<'HTML'
 <div data-item>
     <p data-profile>{profile}</p>
@@ -205,14 +210,14 @@ $r = base64_encode(
 HTML
 );
 
-$f = base64_encode(
+$template_footer = base64_encode(
     <<<'HTML'
 </div>
 <div id="result"></div>
 <table id="voucher" class="card d-none">
     <tr>
         <td class="left-area">
-            <div class="currency bold" data-duration></div>
+            <div class="duration bold" data-duration></div>
             <div class="price" data-price>------</div>
             <div class="currency">RUPIAH</div>
         </td>
@@ -390,11 +395,10 @@ $f = base64_encode(
 HTML
 );
 
-
 return [
     "default" => [
-        'header' => $h,
-        'row' => $r,
-        'footer' => $f
+        'header' => $template_header,
+        'row' => $template_row,
+        'footer' => $template_footer
     ]
 ];

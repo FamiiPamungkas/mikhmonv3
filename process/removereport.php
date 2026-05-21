@@ -17,7 +17,7 @@
  */
 session_start();
 // hide all error
-error_reporting(0);
+// error_reporting(0);
 
 	if ($removereport != "") {
 		$uids = explode("~", $removereport);

@@ -15,9 +15,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-session_start();
-// hide all error
-error_reporting(0);
+
+require_once 'init.php';
 
 ob_start("ob_gzhandler");
 
@@ -25,11 +24,11 @@ ob_start("ob_gzhandler");
 $url = $_SERVER['REQUEST_URI'];
 
 // load session MikroTik
-$session = $_GET['session'];
-$id = $_GET['id'];
-$c = $_GET['c'];
-$router = $_GET['router'];
-$logo = $_GET['logo'];
+$session = get_parameter('session');
+$id = get_parameter('id');
+$c = get_parameter('c');
+$router = get_parameter('router');
+$logo = get_parameter('logo');
 
 $ids = array(
   "editor",

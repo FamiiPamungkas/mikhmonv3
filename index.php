@@ -24,16 +24,7 @@ $url = $_SERVER['REQUEST_URI'];
 
 // load session MikroTik
 
-$session = $_GET['session'];
-
-spl_autoload_register(function($class_name) {
-    // Base directory for the namespace prefix
-    $baseDir = __DIR__ . '/';
-    $file = $baseDir . str_replace('\\', '/', $class_name) . '.php';
-    if (file_exists($file)){
-        include $file;
-    }
-});
+$session = get_parameter("session");
 
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:./admin.php?id=login");
@@ -64,13 +55,13 @@ if (!isset($_SESSION["mikhmon"])) {
 // theme  
   include('./include/theme.php');
   include('./settings/settheme.php');
-  if ($_SESSION['theme'] == "") {
-    $theme = $theme;
-    $themecolor = $themecolor;
-  } else {
-    $theme = $_SESSION['theme'];
-    $themecolor = $_SESSION['themecolor'];
-  }
+    if (get_session("theme") == "") {
+        $theme = $theme;
+        $themecolor = $themecolor;
+    } else {
+        $theme = $_SESSION['theme'];
+        $themecolor = $_SESSION['themecolor'];
+    }
 
 // routeros api
   include_once('./lib/routeros_api.class.php');
@@ -84,45 +75,46 @@ if (!isset($_SESSION["mikhmon"])) {
   
 
 // get variable
-  $hotspot = $_GET['hotspot'];
-  $hotspotuser = $_GET['hotspot-user'];
-  $userbyname = $_GET['hotspot-user'];
-  $removeuseractive = $_GET['remove-user-active'];
-  $removehost = $_GET['remove-host'];
-  $removecookie = $_GET['remove-cookie'];
-  $removeipbinding = $_GET['remove-ip-binding'];
-  $removehotspotuser = $_GET['remove-hotspot-user'];
-  $removehotspotusers = $_GET['remove-hotspot-users'];
-  $removeuserprofile = $_GET['remove-user-profile'];
-  $resethotspotuser = $_GET['reset-hotspot-user'];
-  $removehotspotuserbycomment = $_GET['remove-hotspot-user-by-comment'];
-  $removeexpiredhotspotuser = $_GET['remove-hotspot-user-expired'];
-  $enablehotspotuser = $_GET['enable-hotspot-user'];
-  $disablehotspotuser = $_GET['disable-hotspot-user'];
-  $enableipbinding = $_GET['enable-ip-binding'];
-  $disableipbinding = $_GET['disable-ip-binding'];
-  $userprofile = $_GET['user-profile'];
-  $userprofilebyname = $_GET['user-profile'];
-  $sys = $_GET['system'];
-  $enablesch = $_GET['enable-scheduler'];
-  $disablesch = $_GET['disable-scheduler'];
-  $removesch = $_GET['remove-scheduler'];
-  $macbinding = $_GET['mac'];
-  $ipbinding = $_GET['addr'];
-  $ppp = $_GET['ppp'];
-  $secretbyname = $_GET['secret'];
-  $enablesecr = $_GET['enable-pppsecret'];
-  $disablesecr = $_GET['disable-pppsecret'];
-  $removesecr = $_GET['remove-pppsecret'];
-  $removepprofile = $_GET['remove-pprofile'];
-  $removepactive = $_GET['remove-pactive'];
-  $srv = $_GET['srv'];
-  $prof = $_GET['profile'];
-  $comm = $_GET['comment'];
-  $serveractive = $_GET['server'];
-  $report = $_GET['report'];
-  $removereport = $_GET['remove-report'];
-  $minterface = $_GET['interface'];
+    $hotspot = $_GET['hotspot'];
+    $hotspotuser = get_parameter('hotspot-user');
+    $userbyname = get_parameter('hotspot-user');
+    $userbyprofile = get_parameter('user-by-profile');
+    $removeuseractive = get_parameter('remove-user-active');
+    $removehost = get_parameter('remove-host');
+    $removecookie = get_parameter('remove-cookie');
+    $removeipbinding = get_parameter('remove-ip-binding');
+    $removehotspotuser = get_parameter('remove-hotspot-user');
+    $removehotspotusers = get_parameter('remove-hotspot-users');
+    $removeuserprofile = get_parameter('remove-user-profile');
+    $resethotspotuser = get_parameter('reset-hotspot-user');
+    $removehotspotuserbycomment = get_parameter('remove-hotspot-user-by-comment');
+    $removeexpiredhotspotuser = get_parameter('remove-hotspot-user-expired');
+    $enablehotspotuser = get_parameter('enable-hotspot-user');
+    $disablehotspotuser = get_parameter('disable-hotspot-user');
+    $enableipbinding = get_parameter('enable-ip-binding');
+    $disableipbinding = get_parameter('disable-ip-binding');
+    $userprofile = get_parameter('user-profile');
+    $userprofilebyname = get_parameter('user-profile');
+    $sys = get_parameter('system');
+    $enablesch = get_parameter('enable-scheduler');
+    $disablesch = get_parameter('disable-scheduler');
+    $removesch = get_parameter('remove-scheduler');
+    $macbinding = get_parameter('mac');
+    $ipbinding = get_parameter('addr');
+    $ppp = get_parameter('ppp');
+    $secretbyname = get_parameter('secret');
+    $enablesecr = get_parameter('enable-pppsecret');
+    $disablesecr = get_parameter('disable-pppsecret');
+    $removesecr = get_parameter('remove-pppsecret');
+    $removepprofile = get_parameter('remove-pprofile');
+    $removepactive = get_parameter('remove-pactive');
+    $srv = get_parameter('srv');
+    $prof = get_parameter('profile');
+    $comm = get_parameter('comment');
+    $serveractive = get_parameter('server');
+    $report = get_parameter('report');
+    $removereport = get_parameter('remove-report');
+    $minterface = get_parameter('interface');
 
 
   $pagehotspot = array('users','hosts','ipbinding','cookies','log','dhcp-leases');
@@ -521,8 +513,9 @@ elseif ($ppp == "edit-profile") {
 <script src="./js/mikhmon.js?t=<?= str_replace(" ","_",date("Y-m-d H:i:s")); ?>"></script>
 
 <?php
-if ($hotspot == "dashboard" || substr(end(explode("/", $url)), 0, 8) == "?session") {
-  echo '<script>
+    $url_segment = explode("/", $url);
+    if ($hotspot == "dashboard" || substr(end($url_segment), 0, 8) == "?session") {
+        echo '<script>
     $("#r_3").load("./dashboard/aload.php?session=' . $session . '&load=logs #r_3");  
     var interval1 = "' . ($areload * 1000) . '";
     var dashboard = setInterval(function() {

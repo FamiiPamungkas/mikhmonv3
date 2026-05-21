@@ -17,7 +17,7 @@
  */
 
 // hide all error
-error_reporting(0);
+// error_reporting(0);
 if (!isset($_SESSION["mikhmon"])) {
 	echo '
 <html>

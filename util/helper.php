@@ -11,7 +11,7 @@ function session_config($session, $default = null)
 function session_data($key)
 {
     $cfg = session_config($_GET['session']);
-    switch ($key){
+    switch ($key) {
         case 'iphost':
             return explode('!', $cfg[1])[1];
         case 'userhost':
@@ -52,8 +52,8 @@ function session_list(): array
     global $data;
 
     $session_list = [];
-    foreach ($data as $k=>$v) {
-        if ($k!="mikhmon") $session_list[] = $k;
+    foreach ($data as $k => $v) {
+        if ($k != "mikhmon") $session_list[] = $k;
     }
 
     return $session_list;
@@ -61,8 +61,46 @@ function session_list(): array
 
 function get_parameter($name, $default = "")
 {
-    if (isset($_GET[$name])){
+    if (isset($_GET[$name])) {
         return $_GET[$name];
     }
     return $default;
+}
+
+/* HOTSPOT */
+
+function hotspot_config(string $key = null, $default = null)
+{
+    static $config = null;
+
+    // Load once
+    if ($config === null) {
+        $config = require __DIR__ . '/../hotspot/config.php';
+    }
+
+    // Return all config
+    if ($key === null) {
+        return $config;
+    }
+
+    // Support dot notation
+    $keys = explode('.', $key);
+
+    $value = $config;
+
+    foreach ($keys as $segment) {
+
+        if (!is_array($value) || !array_key_exists($segment, $value)) {
+            return $default;
+        }
+
+        $value = $value[$segment];
+    }
+
+    return $value;
+}
+
+function get_session($name, $default = "")
+{
+    return $_SESSION[$name] ?? $default;
 }
