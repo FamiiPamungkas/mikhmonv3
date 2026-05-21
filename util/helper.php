@@ -67,6 +67,10 @@ function get_parameter($name, $default = "")
     return $default;
 }
 
+function error_log_array($array, $message = "")
+{
+    error_log($message . print_r($array, true));
+}
 /* HOTSPOT */
 
 function hotspot_config(string $key = null, $default = null)
