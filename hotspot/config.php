@@ -7,6 +7,9 @@ return [
             "user_length" => 4,
             "pass_length" => 4,
             "time_limit" => "5h",
+            "rate_limit" => "5M/5M",
+            "shared_users" => "1",
+            "mac_cookie_timeout" => "5h",
             "price" => "2000",
         ],
         "1.H.R" => [
@@ -15,6 +18,9 @@ return [
             "user_length" => 4,
             "pass_length" => 4,
             "time_limit" => "4h",
+            "rate_limit" => "5M/5M",
+            "shared_users" => "1",
+            "mac_cookie_timeout" => "1d",
             "price" => "4000",
         ],
         "1.B.R" => [
@@ -23,6 +29,9 @@ return [
             "user_length" => 4,
             "pass_length" => 4,
             "time_limit" => "30d",
+            "rate_limit" => "5M/5M",
+            "shared_users" => "1",
+            "mac_cookie_timeout" => "3d",
             "price" => "30000",
         ]
     ]

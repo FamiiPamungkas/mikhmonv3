@@ -28,6 +28,7 @@ if (!isset($_SESSION["mikhmon"])) {
     date_default_timezone_set($_SESSION['timezone']);
 
     $profiles = hotspot_config("profiles");
+    initialize_user_profiles($profiles);
 
 	if (isset($_POST['qty'])) {
 		$qty = ($_POST['qty']);

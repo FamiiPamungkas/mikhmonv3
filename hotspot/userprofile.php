@@ -30,6 +30,9 @@ if (!isset($_SESSION["mikhmon"])) {
 ';
 } else {
 
+    require_once __DIR__ . '/utils.php';
+    $profiles = hotspot_config("profiles");
+    initialize_user_profiles($profiles);
 
 // get user profile
 	$getprofile = $API->comm("/ip/hotspot/user/profile/print");
@@ -44,7 +47,7 @@ if (!isset($_SESSION["mikhmon"])) {
 <div class="col-12">
 <div class="card">
 <div class="card-header align-middle">
-    <h3><i class=" fa fa-pie-chart"></i> User Profile 
+    <h3><i class=" fa fa-pie-chart"></i> User Profile
     &nbsp; | &nbsp; <a href="./?user-profile=add&session=<?= $session; ?>" title="Add User"><i class="fa fa-user-plus"></i> Add</a>
 	</h3>
 </div>

@@ -11,7 +11,7 @@ function session_config($session, $default = null)
 function session_data($key)
 {
     $cfg = session_config($_GET['session']);
-    switch ($key){
+    switch ($key) {
         case 'iphost':
             return explode('!', $cfg[1])[1];
         case 'userhost':
@@ -52,8 +52,8 @@ function session_list(): array
     global $data;
 
     $session_list = [];
-    foreach ($data as $k=>$v) {
-        if ($k!="mikhmon") $session_list[] = $k;
+    foreach ($data as $k => $v) {
+        if ($k != "mikhmon") $session_list[] = $k;
     }
 
     return $session_list;
@@ -61,8 +61,13 @@ function session_list(): array
 
 function get_parameter($name, $default = "")
 {
-    if (isset($_GET[$name])){
+    if (isset($_GET[$name])) {
         return $_GET[$name];
     }
     return $default;
+}
+
+function error_log_array($array, $message = "")
+{
+    error_log($message . print_r($array, true));
 }
