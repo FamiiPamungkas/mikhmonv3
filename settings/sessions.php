@@ -78,40 +78,29 @@ if (!isset($_SESSION["mikhmon"])) {
               </div>
             <div class="card-body">
             <div class="row">
-              <?php
-              foreach (file('./include/config.php') as $line) {
-                $value = explode("'", $line)[1];
-                if ($value == "" || $value == "mikhmon") {
-                } else { ?>
+                <?php foreach (session_list() as $s_name) { ?>
                     <div class="col-12">
                         <div class="box bmh-75 box-bordered <?= $color[rand(1, 11)]; ?>">
-                                <div class="box-group">
-                                  
-                                  <div class="box-group-icon">
-                                    <span class="connect pointer" id="<?= $value; ?>">
+                            <div class="box-group">
+                                <div class="box-group-icon">
+                                    <span class="connect pointer" id="<?= $s_name; ?>">
                                     <i class="fa fa-server"></i>
                                     </span>
-                                  </div>
-                                
-                                  <div class="box-group-area">
-                                    <span>
-                                      <?= $_hotspot_name ?> : <?= explode('%', $data[$value][4])[1]; ?><br>
-                                      <?= $_session_name ?> : <?= $value; ?><br>
-                                      <span class="connect pointer"  id="<?= $value; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></span>&nbsp;
-                                      <a href="./admin.php?id=settings&session=<?= $value; ?>"><i class="fa fa-edit"></i> <?= $_edit ?></a>&nbsp;
-                                      <a href="javascript:void(0)" onclick="if(confirm('Are you sure to delete data <?= $value;
-                                      echo " (" . explode('%', $data[$value][4])[1] . ")"; ?>?')){loadpage('./admin.php?id=remove-session&session=<?= $value; ?>')}else{}"><i class="fa fa-remove"></i> <?= $_delete ?></a>
-                                    </span>
-
-                                  </div>
                                 </div>
-                              
+                                <div class="box-group-area">
+                                    <span>
+                                      <?= $_hotspot_name ?> : <?= session_data('hotspotname', $s_name)?><br>
+                                      <?= $_session_name ?> : <?= $s_name; ?><br>
+                                      <span class="connect pointer"  id="<?= $s_name; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></span>&nbsp;
+                                      <a href="./admin.php?id=settings&session=<?= $s_name; ?>"><i class="fa fa-edit"></i> <?= $_edit ?></a>&nbsp;
+                                      <a href="javascript:void(0)" onclick="if(confirm('Are you sure to delete data <?= $s_name;
+                                      echo " (" .session_data('hotspotname', $s_name). ")"; ?>?')){loadpage('./admin.php?id=remove-session&session=<?= $s_name; ?>')}else{}"><i class="fa fa-remove"></i> <?= $_delete ?></a>
+                                    </span>
+                                </div>
                             </div>
-                          </div>
-              <?php
-            }
-          }
-          ?>
+                        </div>
+                    </div>
+                <?php } ?>
               </div>
             </div>
           </div>

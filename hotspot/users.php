@@ -140,7 +140,7 @@ for ($i = 0; $i < $TotalReg; $i++) {
   $uname = $userdetails['name'];
   $upass = $userdetails['password'];
   $uprofile = $userdetails['profile'];
-  $umacadd = $userdetails['mac-address'];
+  $umacadd = $userdetails['mac-address'] ?? "";
   $uuptime = formatDTM($userdetails['uptime']);
   $ubytesi = formatBytes($userdetails['bytes-in'], 2);
   $ubyteso = formatBytes($userdetails['bytes-out'], 2);
@@ -153,7 +153,7 @@ for ($i = 0; $i < $TotalReg; $i++) {
   } else {
     $utimelimit = ' ' . $utimelimit;
   }
-  $udatalimit = $userdetails['limit-bytes-total'];
+  $udatalimit = $userdetails['limit-bytes-total'] ?? "";
   if ($udatalimit == '') {
     $udatalimit = '';
   } else {

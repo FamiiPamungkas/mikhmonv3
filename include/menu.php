@@ -24,7 +24,10 @@ if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
 
-  include ('./include/version.php');
+    include ('./include/version.php');
+
+    $hotspot = get_parameter("hotspot");
+    $userbyprofile = get_parameter('user-by-profile');
 
     $btnmenuactive = "font-weight: bold;background-color: #f9f9f9; color: #000000";
     $url_segment = explode("/", $url);
@@ -245,7 +248,7 @@ $(document).ready(function(){
 <div id="notify"><div class="message"></div></div>
 <div id="temp"></div>
 <?php 
-include('./info.php');
+//include('./info.php');
 } else { ?>
 
 <div id="navbar" class="navbar">

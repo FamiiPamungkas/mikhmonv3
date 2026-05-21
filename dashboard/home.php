@@ -40,7 +40,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
 // get routeboard info
   $getrouterboard = RouterosAPI::getInstance()->comm("/system/routerboard/print");
-  $routerboard = $getrouterboard[0];
+  $routerboard = $getrouterboard[0] ?? null;
 /*
 // move hotspot log to disk *
   $getlogging = $API->comm("/system/logging/print", array("?prefix" => "->", ));
@@ -142,7 +142,7 @@ if (!isset($_SESSION["mikhmon"])) {
                 <span >
                     <?php
                     echo $_board_name." : " . $resource['board-name'] . "<br/>
-                    ".$_model." : " . $routerboard['model'] . "<br/>
+                    ".$_model." : " . ($routerboard['model'] ?? "-") . "<br/>
                     Router OS : " . $resource['version'];
                     ?>
                 </span>

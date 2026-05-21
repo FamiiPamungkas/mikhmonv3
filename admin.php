@@ -48,7 +48,7 @@ include('./include/quickbt.php');
 include('./include/theme.php');
 include('./settings/settheme.php');
 include('./settings/setlang.php');
-if ($_SESSION['theme'] == "") {
+if (get_parameter('theme')== "") {
     $theme = $theme;
     $themecolor = $themecolor;
   } else {
@@ -174,7 +174,7 @@ if ($id == "login" || substr($url, -1) == "p") {
 ?>
 <script src="js/mikhmon-ui.<?= $theme; ?>.min.js"></script>
 <script src="js/mikhmon.js?t=<?= str_replace(" ","_",date("Y-m-d H:i:s")); ?>"></script>
-<?php include('./include/info.php'); ?>
+<?php //include('./include/info.php'); ?>
 </body>
 </html>
 

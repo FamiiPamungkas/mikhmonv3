@@ -8,9 +8,22 @@ function session_config($session, $default = null)
     return $data[$session] ?? $default;
 }
 
-function session_data($key)
+function session_data($key, $session = "")
 {
-    $cfg = session_config($_GET['session']);
+    if (!$session) $session = get_parameter('session');
+    $cfg = session_config($session);
+
+    switch ($key){
+        case 'useradm':
+            $mikhmon_cfg = session_config('mikhmon');
+            return explode('<|<', $mikhmon_cfg[1])[1];
+        case 'passadm':
+            $mikhmon_cfg = session_config('mikhmon');
+            return explode('>|>', $mikhmon_cfg[2])[1];
+    }
+
+    if (!$cfg) return null;
+
     switch ($key) {
         case 'iphost':
             return explode('!', $cfg[1])[1];
@@ -36,12 +49,6 @@ function session_data($key)
             return $_GET['session'];
         case 'livereport':
             return explode('@!@', $cfg[11])[1];
-        case 'useradm':
-            $mikhmon_cfg = session_config('mikhmon');
-            return explode('<|<', $mikhmon_cfg[1])[1];
-        case 'passadm':
-            $mikhmon_cfg = session_config('mikhmon');
-            return explode('>|>', $mikhmon_cfg[2])[1];
         default:
             return null;
     }
