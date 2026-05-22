@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use classes\VoucherTemplate;
+
 require_once __DIR__ . '/../init.php';
 
 ob_start("ob_gzhandler");
@@ -50,16 +52,16 @@ if (!isset($_SESSION["mikhmon"])) {
         $i++;
     }
 
-    $template = get_template($template_param);
+    $template = VoucherTemplate::getByName($template_param);
     if ($template) {
-        render_template($template['header'], [
+        render_template($template->header, [
             "hotspotname" => $hotspotname ?? "",
             "getuprofile" => $getuprofile ?? "",
             "id" => $id ?? ""
         ]);
 
         foreach ($users as $user) {
-            render_template($template['row'], [
+            render_template($template->row, [
                 'profile' => $user['profile'],
                 'username' => $user['username'],
                 'password' => $user['password'],
@@ -67,9 +69,9 @@ if (!isset($_SESSION["mikhmon"])) {
             ]);
         }
 
-        render_template($template["footer"]);
+        render_template($template->footer);
 
     } else {
-        echo "Template not found";
+        echo "template [$template_param] not found";
     }
 }

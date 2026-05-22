@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use classes\VoucherTemplate;
+
 require_once __DIR__.'/../init.php';
 
 ob_start("ob_gzhandler");
@@ -36,8 +38,7 @@ if (!isset($_SESSION["mikhmon"])) {
     include('../lib/formatbytesbites.php');
 
     $id = get_parameter('id');
-    $qr = get_parameter('qr');
-    $small = get_parameter('small');
+    $template_param = get_parameter('template');
     $userp = get_parameter('user');
 
     require('../lib/routeros_api.class.php');
@@ -70,10 +71,10 @@ if (!isset($_SESSION["mikhmon"])) {
     $getprice = $cfg_profile["price"] ?? "";
 }
 
-$templates = require 'template-new.php';
-$template = $templates["default"];
-render_template($template['header'], [
-    "hotspotname" => $hotspotname,
+/** @var $template VoucherTemplate */
+$template = VoucherTemplate::getByName($template_param);
+render_template($template->header, [
+    "hotspotname" => $hotspotname ?? "",
     "getuprofile" => $getuprofile,
     "id" => $id
 ]);
@@ -81,7 +82,7 @@ render_template($template['header'], [
 for ($i = 0; $i < $TotalReg; $i++) {
     $regtable = $getuser[$i];
 
-    render_template($template['row'], [
+    render_template($template->row, [
         'profile' => $regtable['profile'],
         'username' => $regtable['name'],
         'password' => $regtable['password'],
@@ -89,4 +90,4 @@ for ($i = 0; $i < $TotalReg; $i++) {
     ]);
 }
 
-render_template($template["footer"]);
+render_template($template->footer);

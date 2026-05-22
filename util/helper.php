@@ -115,3 +115,32 @@ function get_session($name, $default = "")
 {
     return $_SESSION[$name] ?? $default;
 }
+
+function sanitize_file_name(string $filename): string
+{
+    // remove invalid characters
+    $filename = preg_replace(
+        '/[\\\\\/:*?"<>|]/',
+        '',
+        $filename
+    );
+
+    // replace spaces with underscore
+    $filename = preg_replace(
+        '/\s+/',
+        '_',
+        $filename
+    );
+
+    // keep only safe characters
+    $filename = preg_replace(
+        '/[^A-Za-z0-9._-]/',
+        '',
+        $filename
+    );
+
+    // prevent empty filename
+    $filename = trim($filename, '._-');
+
+    return $filename ?: 'file';
+}

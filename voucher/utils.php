@@ -1,8 +1,8 @@
 <?php
 
-function render_template($template, $vars = [])
+function render_template($template, $vars = [], $encoded = false)
 {
-    $template = base64_decode($template);
+    $template = $encoded ? base64_decode($template) : $template;
     foreach ($vars as $key => $value) {
         $template = str_replace(
             '{' . $key . '}',

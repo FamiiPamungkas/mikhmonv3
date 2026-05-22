@@ -4,7 +4,7 @@ namespace classes;
 
 class Sql
 {
-    static function select($table, $field = "*", $where = []): string
+    static function select($table, $field = "*", $where = [], $order = ""): string
     {
         if (is_array($field)) {
             $field = implode(", ", $field);
@@ -14,9 +14,8 @@ class Sql
         }
 
         $sql = "SELECT $field FROM $table ";
-        if ($where) {
-            $sql .= "WHERE $where";
-        }
+        if ($where) $sql .= "WHERE $where ";
+        if ($order) $sql .= "ORDER BY $order";
 
         return $sql;
     }

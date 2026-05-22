@@ -15,9 +15,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-session_start();
-// hide all error
-// error_reporting(0);
+
+require_once __DIR__.'/../init.php';
 
 ini_set('max_execution_time', 300);
 
@@ -32,17 +31,17 @@ date_default_timezone_set($_SESSION['timezone']);
 		$getprofile = $API->comm("/ip/hotspot/user/profile/print", array(
 			"?name" => "$genprof",
 		));
-		$ponlogin = $getprofile[0]['on-login'];
-		$getprice = explode(",", $ponlogin)[2];
+		$ponlogin = $getprofile[0]['on-login'] ?? "";
+		$getprice = explode(",", $ponlogin)[2] ?? "";
 		if ($getprice == "0") {
 			$getprice = "";
 		} else {
 			$getprice = $getprice;
 		}
 
-		$getvalid = explode(",", $ponlogin)[3];
+		$getvalid = explode(",", $ponlogin)[3] ?? "";
 
-		$getlocku = explode(",", $ponlogin)[6];
+		$getlocku = explode(",", $ponlogin)[6] ?? "";
 		if ($getlocku == "") {
 			$getprice = "Disable";
 		} else {

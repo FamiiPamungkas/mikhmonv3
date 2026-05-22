@@ -3,6 +3,7 @@
 namespace classes;
 
 use PDO;
+use PDOStatement;
 
 class SQLiteDB
 {
@@ -12,6 +13,9 @@ class SQLiteDB
     static private $instance = null;
 
     public $db;
+    /**
+     * @var $stmt PDOStatement
+     */
     public $stmt;
 
     /*
@@ -80,14 +84,23 @@ class SQLiteDB
         return $this->stmt->fetchAll();
     }
 
-    public function fetchColumn()
+    public function fetchColumn(): array
     {
-        return $this->stmt->fetchColumn();
+        return $this->stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function fetchAllClass($className): array
     {
         return $this->stmt->fetchAll(PDO::FETCH_CLASS, $className);
+    }
+
+    public function fetchClass($className)
+    {
+        $list = $this->stmt->fetchAll(PDO::FETCH_CLASS, $className);
+        foreach ($list as $o){
+            return $o;
+        }
+        return null;
     }
 
     /*

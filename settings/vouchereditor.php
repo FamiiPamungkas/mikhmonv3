@@ -33,6 +33,7 @@ if (!isset($_SESSION["mikhmon"])) {
     include(__DIR__.'/../include/readcfg.php');
 
     $template_param = get_parameter("template");
+    $read_from_file = get_parameter("read-from-file");
 
     $templates = VoucherTemplate::fetchAll();
     $template_names = [];
@@ -55,11 +56,25 @@ if (!isset($_SESSION["mikhmon"])) {
     }
 
     if (isset($_POST['save'])) {
-
         $voucher = new VoucherTemplate($_POST);
         $r = $voucher->saveOrUpdate();
         echo "<script>window.location='./?hotspot=template-editor&template=".$voucher->name."&session=".$session."'</script>";
 
+    }
+
+    if (isset($_POST['save-to-file'])) {
+        $voucher = new VoucherTemplate($_POST);
+        $data = (array)$voucher;
+        $data['header'] = base64_encode($voucher->header);
+        $data['row'] = base64_encode($voucher->row);
+        $data['footer'] = base64_encode($voucher->footer);
+
+        $content = "<?php\n\nreturn " . var_export($data, true) . ";\n";
+
+        $path = __DIR__ . "/../voucher/template-$voucher->id.php";
+        file_put_contents($path, $content);
+
+        echo "<script>window.location='./?hotspot=template-editor&template=" . $voucher->name . "&session=" . $session . "'</script>";
     }
 
 }
@@ -117,6 +132,7 @@ if (!isset($_SESSION["mikhmon"])) {
                                     </div>
                                     <div class="col-4 col-box-12">
                                         <button type="submit" title="Save template" class="btn bg-primary" name="save"><i class="fa fa-save"></i> <?= $_save ?></button>
+                                        <button type="submit" title="Save template" class="btn bg-primary" name="save-to-file"><i class="fa fa-save"></i> Save As Master</button>
                                         <a class="btn bg-green" onclick="openPreview('<?= $session ?>')" title="View voucher"><i class="fa fa-image"></i> Preview</a>
                                     </div>
                                 </div>
@@ -144,16 +160,16 @@ if (!isset($_SESSION["mikhmon"])) {
         </div>
     </div>
     <div class="col-3">
-        <div class="card">
-            <div class="card-header">
-                <h3>Variable</h3>
-            </div>
-            <div class="card-body">
-				<textarea id="var" class="bg-dark" readonly rows=39 style="width:100%" disabled>
-	        		<?= file_get_contents('./voucher/variable.php'); ?>
-	    		</textarea>
-            </div>
-        </div>
+<!--        <div class="card">-->
+<!--            <div class="card-header">-->
+<!--                <h3>Variable</h3>-->
+<!--            </div>-->
+<!--            <div class="card-body">-->
+<!--				<textarea id="var" class="bg-dark" readonly rows=39 style="width:100%" disabled>-->
+<!--	        		--><?php //= file_get_contents('./voucher/variable.php'); ?>
+<!--	    		</textarea>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </div>
 
