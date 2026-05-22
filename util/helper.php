@@ -10,20 +10,7 @@ function session_config($session, $default = null)
 
 function session_data($key, $session = "")
 {
-    if (!$session) $session = get_parameter('session');
-    $cfg = session_config($session);
-
-    switch ($key){
-        case 'useradm':
-            $mikhmon_cfg = session_config('mikhmon');
-            return explode('<|<', $mikhmon_cfg[1])[1];
-        case 'passadm':
-            $mikhmon_cfg = session_config('mikhmon');
-            return explode('>|>', $mikhmon_cfg[2])[1];
-    }
-
-    if (!$cfg) return null;
-
+    $cfg = session_config($_GET['session']);
     switch ($key) {
         case 'iphost':
             return explode('!', $cfg[1])[1];
@@ -77,70 +64,4 @@ function get_parameter($name, $default = "")
 function error_log_array($array, $message = "")
 {
     error_log($message . print_r($array, true));
-}
-/* HOTSPOT */
-
-function hotspot_config(string $key = null, $default = null)
-{
-    static $config = null;
-
-    // Load once
-    if ($config === null) {
-        $config = require __DIR__ . '/../hotspot/config.php';
-    }
-
-    // Return all config
-    if ($key === null) {
-        return $config;
-    }
-
-    // Support dot notation
-    $keys = explode('.', $key);
-
-    $value = $config;
-
-    foreach ($keys as $segment) {
-
-        if (!is_array($value) || !array_key_exists($segment, $value)) {
-            return $default;
-        }
-
-        $value = $value[$segment];
-    }
-
-    return $value;
-}
-
-function get_session($name, $default = "")
-{
-    return $_SESSION[$name] ?? $default;
-}
-
-function sanitize_file_name(string $filename): string
-{
-    // remove invalid characters
-    $filename = preg_replace(
-        '/[\\\\\/:*?"<>|]/',
-        '',
-        $filename
-    );
-
-    // replace spaces with underscore
-    $filename = preg_replace(
-        '/\s+/',
-        '_',
-        $filename
-    );
-
-    // keep only safe characters
-    $filename = preg_replace(
-        '/[^A-Za-z0-9._-]/',
-        '',
-        $filename
-    );
-
-    // prevent empty filename
-    $filename = trim($filename, '._-');
-
-    return $filename ?: 'file';
 }
