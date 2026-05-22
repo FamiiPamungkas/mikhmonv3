@@ -19,26 +19,28 @@
 require_once 'init.php';
 
 // hide all error
-error_reporting(0);
+// // error_reporting(0);
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
 
 
 // get MikroTik system clock
-  $getclock = $API->comm("/system/clock/print");
+  $getclock = RouterosAPI::getInstance()->comm("/system/clock/print");
   $clock = $getclock[0];
   $timezone = $getclock[0]['time-zone-name'];
+  if ($timezone=="manual") $timezone = "Asia/Jakarta";
+
   $_SESSION['timezone'] = $timezone;
   date_default_timezone_set($timezone);
 
 // get system resource MikroTik
-  $getresource = $API->comm("/system/resource/print");
+  $getresource = RouterosAPI::getInstance()->comm("/system/resource/print");
   $resource = $getresource[0];
 
 // get routeboard info
-  $getrouterboard = $API->comm("/system/routerboard/print");
-  $routerboard = $getrouterboard[0];
+  $getrouterboard = RouterosAPI::getInstance()->comm("/system/routerboard/print");
+  $routerboard = $getrouterboard[0] ?? null;
 /*
 // move hotspot log to disk *
   $getlogging = $API->comm("/system/logging/print", array("?prefix" => "->", ));
@@ -54,7 +56,7 @@ if (!isset($_SESSION["mikhmon"])) {
   $THotspotLog = count($getlog);
 */
 // get & counting hotspot users
-  $countallusers = $API->comm("/ip/hotspot/user/print", array("count-only" => ""));
+  $countallusers = RouterosAPI::getInstance()->comm("/ip/hotspot/user/print", array("count-only" => ""));
   if ($countallusers < 2) {
     $uunit = "item";
   } elseif ($countallusers > 1) {
@@ -62,7 +64,7 @@ if (!isset($_SESSION["mikhmon"])) {
   }
 
 // get & counting hotspot active
-  $counthotspotactive = $API->comm("/ip/hotspot/active/print", array("count-only" => ""));
+  $counthotspotactive = RouterosAPI::getInstance()->comm("/ip/hotspot/active/print", array("count-only" => ""));
   if ($counthotspotactive < 2) {
     $hunit = "item";
   } elseif ($counthotspotactive > 1) {
@@ -140,7 +142,7 @@ if (!isset($_SESSION["mikhmon"])) {
                 <span >
                     <?php
                     echo $_board_name." : " . $resource['board-name'] . "<br/>
-                    ".$_model." : " . $routerboard['model'] . "<br/>
+                    ".$_model." : " . ($routerboard['model'] ?? "-") . "<br/>
                     Router OS : " . $resource['version'];
                     ?>
                 </span>
@@ -234,7 +236,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
               <div class="card-body">
   
-                  <?php $getinterface = $API->comm("/interface/print");
+                  <?php $getinterface = RouterosAPI::getInstance()->comm("/interface/print");
                   $interface = $getinterface[$iface - 1]['name']; 
                   /*$TotalReg = count($getinterface);
                   for ($i = 0; $i < $TotalReg; $i++) {

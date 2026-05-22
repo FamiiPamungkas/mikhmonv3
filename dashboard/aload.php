@@ -17,7 +17,7 @@
  */
 session_start();
 // hide all error
-error_reporting(0);
+// // error_reporting(0);
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
@@ -57,7 +57,7 @@ include('../lang/'.$langid.'.php');
 
 // get routeboard info
     $getrouterboard = $API->comm("/system/routerboard/print");
-    $routerboard = $getrouterboard[0];
+    $routerboard = $getrouterboard[0] ?? null;
     ?>
     
     <div id="r_1" class="row">
@@ -84,7 +84,7 @@ include('../lang/'.$langid.'.php');
                 <span >
                     <?php
                     echo $_board_name." : " . $resource['board-name'] . "<br/>
-                    ".$_model." : " . $routerboard['model'] . "<br/>
+                    ".$_model." : " . ($routerboard['model'] ?? "-") . "<br/>
                     Router OS : " . $resource['version'];
                     ?>
                 </span>
@@ -232,7 +232,7 @@ include('../lang/'.$langid.'.php');
                         <table class="table table-sm table-bordered table-hover" style="font-size: 12px; td.padding:2px;">
                           <thead>
                             <tr>
-                            <th><?= $_time .$THotspotLog; ?></th>
+                            <th><?= $_time ?></th>
                             <th><?= $_users ?> (IP)</th>
                             <th><?= $_messages ?></th>
                             </tr>
@@ -243,29 +243,30 @@ include('../lang/'.$langid.'.php');
 
 
   for ($i = 0; $i < 20; $i++) {
-    $mess = explode(":", $log[$i]['message']);
-    $time = $log[$i]['time'];
-    echo "<tr>";
-    if (substr($log[$i]['message'], 0, 2) == "->") {
-      echo "<td>" . $time . "</td>";
-    //echo substr($mess[1], 0,2);
-      echo "<td>";
-      if (count($mess) > 6) {
-        echo $mess[1] . ":" . $mess[2] . ":" . $mess[3] . ":" . $mess[4] . ":" . $mess[5] . ":" . $mess[6];
+      if (!isset($log[$i]))continue;
+      $mess = explode(":", $log[$i]['message']);
+      $time = $log[$i]['time'];
+      echo "<tr>";
+      if (substr($log[$i]['message'], 0, 2) == "->") {
+          echo "<td>" . $time . "</td>";
+          //echo substr($mess[1], 0,2);
+          echo "<td>";
+          if (count($mess) > 6) {
+              echo $mess[1] . ":" . $mess[2] . ":" . $mess[3] . ":" . $mess[4] . ":" . $mess[5] . ":" . $mess[6];
+          } else {
+              echo $mess[1];
+          }
+          echo "</td>";
+          echo "<td>";
+          if (count($mess) > 6) {
+              echo str_replace("trying to", "", $mess[7] . " " . $mess[8] . " " . $mess[9] . " " . $mess[10]);
+          } else {
+              echo str_replace("trying to", "", $mess[2] . " " . $mess[3] . " " . $mess[4] . " " . $mess[5]);
+          }
+          echo "</td>";
       } else {
-        echo $mess[1];
       }
-      echo "</td>";
-      echo "<td>";
-      if (count($mess) > 6) {
-        echo str_replace("trying to", "", $mess[7] . " " . $mess[8] . " " . $mess[9] . " " . $mess[10]);
-      } else {
-        echo str_replace("trying to", "", $mess[2] . " " . $mess[3] . " " . $mess[4] . " " . $mess[5]);
-      }
-      echo "</td>";
-    } else {
-    }
-    echo "</tr>";
+      echo "</tr>";
   }
   ?>
                         </tbody>

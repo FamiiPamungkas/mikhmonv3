@@ -17,7 +17,7 @@
  */
 session_start();
 // hide all error
-error_reporting(0);
+// error_reporting(0);
 $getuser = $API->comm("/ip/hotspot/user/print", array(
   "?limit-uptime" => "1s",
 ));
