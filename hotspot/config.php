@@ -3,7 +3,7 @@ return [
     "profiles" => [
         "5.J.R" => [
             "label" => "5 JAM",
-            "prefix" => "5j",
+            "prefix" => "5jm",
             "user_length" => 4,
             "pass_length" => 4,
             "time_limit" => "5h",
@@ -14,7 +14,7 @@ return [
         ],
         "1.H.R" => [
             "label" => "1 HARI",
-            "prefix" => "4j",
+            "prefix" => "1hm",
             "user_length" => 4,
             "pass_length" => 4,
             "time_limit" => "4h",

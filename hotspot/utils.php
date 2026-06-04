@@ -15,9 +15,10 @@ function initialize_user_profiles($profiles)
                 "shared-users" => $v["shared_users"],
                 "status-autorefresh" => "1m",
                 "on-login" => "",
-                "parent-queue" => ""
+//                "parent-queue" => ""
             ];
             $r = RouterosAPI::getInstance()->comm("/ip/hotspot/user/profile/add", $new_profile);
+            error_log_array($r, "PROFILE ADD ");
             //todo handle jika error
         }
     }

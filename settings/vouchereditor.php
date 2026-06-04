@@ -77,6 +77,14 @@ if (!isset($_SESSION["mikhmon"])) {
         echo "<script>window.location='./?hotspot=template-editor&template=" . $voucher->name . "&session=" . $session . "'</script>";
     }
 
+    if (isset($_POST['delete']) && $template_param && $template_param != "default") {
+        $template = VoucherTemplate::getByName($template_param);
+        if ($template != null){
+            $template->delete();
+            echo "<script>window.location='./?hotspot=template-editor&template=default&session=" . $session . "'</script>";
+        }
+    }
+
 }
 ?>
 <!-- Create a simple CodeMirror instance -->
@@ -134,6 +142,7 @@ if (!isset($_SESSION["mikhmon"])) {
                                         <button type="submit" title="Save template" class="btn bg-primary" name="save"><i class="fa fa-save"></i> <?= $_save ?></button>
                                         <button type="submit" title="Save template" class="btn bg-primary" name="save-to-file"><i class="fa fa-save"></i> Save As Master</button>
                                         <a class="btn bg-green" onclick="openPreview('<?= $session ?>')" title="View voucher"><i class="fa fa-image"></i> Preview</a>
+                                        <button type="submit" title="Delete template" class="btn bg-danger" name="delete"><i class="fa fa-trash"></i> Delete</button>
                                     </div>
                                 </div>
                             </td>

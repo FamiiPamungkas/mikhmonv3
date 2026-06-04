@@ -88,5 +88,9 @@ class VoucherTemplate
         }
     }
 
-
+    function delete(): bool
+    {
+        $db = SQLiteDB::getInstance();
+        return $db->delete(self::TABLE, "id = :id", ["id" => $this->id]);
+    }
 }

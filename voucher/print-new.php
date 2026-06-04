@@ -18,12 +18,12 @@
 
 use classes\VoucherTemplate;
 
-require_once __DIR__.'/../init.php';
+require_once __DIR__ . '/../init.php';
 
 ob_start("ob_gzhandler");
 
 if (!isset($_SESSION["mikhmon"])) {
-  header("Location:../admin.php?id=login");
+    header("Location:../admin.php?id=login");
 } else {
 
     date_default_timezone_set($_SESSION['timezone']);
@@ -38,31 +38,21 @@ if (!isset($_SESSION["mikhmon"])) {
     include('../lib/formatbytesbites.php');
 
     $id = get_parameter('id');
-    $template_param = get_parameter('template');
+    $template_param = get_parameter('template', 'default');
     $userp = get_parameter('user');
 
     require('../lib/routeros_api.class.php');
 
     if ($userp != "") {
-        $usermode = explode('-', $userp)[0];
-        $pulluser = explode('-', $userp);
-        $iuser = count($pulluser);
-        $prefix = explode('-', $userp)[$iuser - 2];
-        $user = explode('-', $userp)[$iuser - 1];
-        if ($iuser == 3) {
-            $user = $prefix . "-" . $user;
-        } else {
-            $user = $user;
-        }
-        $getuser = RouterosAPI::getInstance()->comm("/ip/hotspot/user/print", array("?name" => "$user"));
+        $getuser = RouterosAPI::getInstance()->comm("/ip/hotspot/user/print", array("?name" => "$userp"));
         $TotalReg = count($getuser);
     } elseif ($id != "") {
-        $getuser =  RouterosAPI::getInstance()->comm('/ip/hotspot/user/print', array("?comment" => "$id", "?uptime" => "0s"));
+        $getuser = RouterosAPI::getInstance()->comm('/ip/hotspot/user/print', array("?comment" => "$id", "?uptime" => "0s"));
         $TotalReg = count($getuser);
     }
 
     $getuprofile = $getuser[0]['profile'];
-    $getprofile =  RouterosAPI::getInstance()->comm("/ip/hotspot/user/profile/print", array("?name" => "$getuprofile"));
+    $getprofile = RouterosAPI::getInstance()->comm("/ip/hotspot/user/profile/print", array("?name" => "$getuprofile"));
 
     $cfg_profiles = hotspot_config("profiles");
     $cfg_profile = $cfg_profiles[$getuprofile];
@@ -73,21 +63,25 @@ if (!isset($_SESSION["mikhmon"])) {
 
 /** @var $template VoucherTemplate */
 $template = VoucherTemplate::getByName($template_param);
-render_template($template->header, [
-    "hotspotname" => $hotspotname ?? "",
-    "getuprofile" => $getuprofile,
-    "id" => $id
-]);
-
-for ($i = 0; $i < $TotalReg; $i++) {
-    $regtable = $getuser[$i];
-
-    render_template($template->row, [
-        'profile' => $regtable['profile'],
-        'username' => $regtable['name'],
-        'password' => $regtable['password'],
-        'price' => $getprice,
+if ($template) {
+    render_template($template->header, [
+        "hotspotname" => $hotspotname ?? "",
+        "getuprofile" => $getuprofile,
+        "id" => $id
     ]);
-}
 
-render_template($template->footer);
+    for ($i = 0; $i < $TotalReg; $i++) {
+        $regtable = $getuser[$i];
+
+        render_template($template->row, [
+            'profile' => $regtable['profile'],
+            'username' => $regtable['name'],
+            'password' => $regtable['password'],
+            'price' => $getprice,
+        ]);
+    }
+
+    render_template($template->footer);
+} else {
+    echo "Template [$template_param] tidak ditemukan ";
+}

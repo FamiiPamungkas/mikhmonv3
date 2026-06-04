@@ -31,138 +31,175 @@ if (!isset($_SESSION["mikhmon"])) {
 
     $btnmenuactive = "font-weight: bold;background-color: #f9f9f9; color: #000000";
     $url_segment = explode("/", $url);
+
+    $shome = "";
+    $suserprof = "";
+    $sactive = "";
+    $shosts = '';
+    $sipbind = '';
+    $scookies = '';
+    $upmenu = '';
+    $hamenu = '';
+    $hmenu = '';
+    $ibmenu = '';
+    $cmenu = '';
+    $sadduser = '';
+    $sgenuser = '';
+    $suserprofiles = '';
+    $sadduserprof = '';
+    $squick = '';
+    $susersbp = '';
+    $log = '';
+    $lmenu = '';
+    $slog = '';
+    $sulog = '';
+    $sysmenu = '';
+    $schmenu = '';
+    $ssch = '';
+    $slease = '';
+    $strafficmonitor = '';
+    $sselling = '';
+    $ssett = '';
+    $settmenu = '';
+    $uplogo = '';
+    $teditor = '';
+    $sabout = '';
+    $susers = '';
+    $umenu = '';
+    $susersl = '';
+
     if ($hotspot == "dashboard" || substr(end($url_segment), 0, 8) == "?session") {
-    $shome = "active";
-    $mpage = $_dashboard;
-  } elseif ($hotspot == "quick-print" || $hotspot == "list-quick-print") {
-    $squick = "active";
-    $mpage = $_quick_print;   
-  } elseif ($hotspot == "users" || $userbyprofile != "" || $hotspot == "export-users" || $removehotspotuserbycomment != "" || $removehotspotuser != "" || $removehotspotusers != "" || $disablehotspotuser || $enablehotspotuser != "") {
-    $susersl = "active";
-    $susers = "active";
-    $mpage = $_users;
-    $umenu = "menu-open";
-  } elseif ($hotspotuser == "add") {
-    $sadduser = "active";
-    $mpage = $_users;
-    $susers = "active";
-    $umenu = "menu-open";
-  } elseif ($hotspotuser == "generate") {
-    $sgenuser = "active";
-    $mpage = $_users;
-    $susers = "active";
-    $umenu = "menu-open";
-  } elseif ($userbyname != ""  || $resethotspotuser != "") {
-    $susers = "active";
-    $mpage = $_users;
-    $umenu = "menu-open";
-  } elseif ($hotspot == "user-profiles") {
-    $suserprofiles = "active";
-    $suserprof = "active";
-    $mpage = $_user_profile;
-    $upmenu = "menu-open";
-  } elseif ($hotspot == "active" || $removeuseractive != "") {
-    $sactive = "active";
-    $mpage = $_hotspot_active;
-    $hamenu = "menu-open";
-  } elseif ($hotspot == "hosts" || $hotspot == "hostp" || $hotspot == "hosta" || $removehost != "") {
-    $shosts = "active";
-    $mpage = $_hosts;
-    $hmenu = "menu-open";
-  } elseif ($hotspot == "dhcp-leases") {
-    $slease = "active";
-    $mpage = $_dhcp_leases;
-  } elseif ($minterface == "traffic-monitor") {
-    $strafficmonitor = "active";
-    $mpage = $_traffic_monitor;  
-  } elseif ($hotspot == "ipbinding" || $hotspot == "binding" || $removeipbinding != "" || $enableipbinding != "" || $disableipbinding != "") {
-    $sipbind = "active";
-    $mpage = $_ip_bindings;
-    $ibmenu = "menu-open";
-  } elseif ($hotspot == "template-editor") {
-    $ssett = "active";
-    $teditor = "active";
-    $mpage = $_template_editor;
-    $settmenu = "menu-open";
-  } elseif ($hotspot == "uplogo") {
-    $ssett = "active";
-    $uplogo = "active";
-    $mpage = $_upload_logo;
-    $settmenu = "menu-open";
-  } elseif ($hotspot == "cookies" || $removecookie != "") {
-    $scookies = "active";
-    $mpage = $_hotspot_cookies;
-    $cmenu = "menu-open";
-  } elseif ($hotspot == "log") {
-    $log = "active";
-    $slog = "active";
-    $mpage = $_hotspot_log;
-    $lmenu = "menu-open";
-  } elseif ($report == "userlog") {
-    $log = "active";
-    $sulog = "active";
-    $mpage = $_user_log;
-    $lmenu = "menu-open";
-  } elseif ($ppp == "secrets" || $ppp == "addsecret" || $enablesecr != "" || $disablesecr != "" || $removesecr != "" || $secretbyname != "") {
-    $mppp = "active";
-    $ssecrets = "active";
-    $mpage = $_ppp_secrets;
-    $pppmenu = "menu-open";
-  } elseif ($ppp == "profiles" || $removepprofile != "" || $ppp == "add-profile" || $ppp == "edit-profile"  ) {
-    $mppp = "active";
-    $spprofile = "active";
-    $mpage = $_ppp_profiles;
-    $pppmenu = "menu-open";
-  } elseif ($ppp == "active" || $removepactive != "") {
-    $mppp = "active";
-    $spactive = "active";
-    $mpage = $_ppp_active;
-    $pppmenu = "menu-open";
-  } elseif ($sys == "scheduler" || $enablesch != "" || $disablesch != "" || $removesch != "") {
-    $sysmenu = "active";
-    $ssch = "active";
-    $mpage = $_system_scheduler;
-    $schmenu = "menu-open";
-  } elseif ($report == "selling" || $report == "resume-report") {
-    $sselling = "active";
-    $mpage = $_report;
-  } elseif ($userprofile == "add") {
-    $suserprof = "active";
-    $sadduserprof = "active";
-    $mpage = $_user_profile;
-    $upmenu = "menu-open";
-  } elseif ($userprofilebyname != "") {
-    $suserprof = "active";
-    $mpage = $_user_profile;
-    $upmenu = "menu-open";
-  } elseif ($hotspot == "users-by-profile") {
-    $susersbp = "active";
-    $mpage = $_vouchers;
-  } elseif ($userbyname != "") {
-    $mpage = $_users;
-    $susers = "active";
-  } elseif ($hotspot == "about") {
-    $mpage = $_about;
-    $sabout = "active";
-  } elseif ($id == "sessions" || $id == "remove" || $router == "new") {
-    $ssesslist = "active";
-    $mpage = $_admin_settings;
-  } elseif ($id == "settings" && $session == "new") {
-    $snsettings = "active";
-    $mpage = $_add_router;
-  } elseif ($id == "settings" || $id == "connect") {
-    $ssettings = "active";
-    $mpage = $_session_settings;
-  } elseif ($id == "about") {
-    $sabout = "active";
-    $mpage = $_about;
-  } elseif ($id == "uplogo") {
-    $suplogo = "active";
-    $mpage = $_upload_logo;
-  } elseif ($id == "editor") {
-    $seditor = "active";
-    $mpage = $_template_editor;
-  }
+        $shome = "active";
+        $mpage = $_dashboard;
+    } elseif ($hotspot == "quick-print" || $hotspot == "list-quick-print") {
+        $squick = "active";
+        $mpage = $_quick_print;
+    } elseif ($hotspot == "users" || $userbyprofile != "" || $hotspot == "export-users" || $removehotspotuserbycomment != "" || $removehotspotuser != "" || $removehotspotusers != "" || $disablehotspotuser || $enablehotspotuser != "") {
+        $susersl = "active";
+        $susers = "active";
+        $mpage = $_users;
+        $umenu = "menu-open";
+    } elseif ($hotspotuser == "add") {
+        $sadduser = "active";
+        $mpage = $_users;
+        $susers = "active";
+        $umenu = "menu-open";
+    } elseif ($hotspotuser == "generate") {
+        $sgenuser = "active";
+        $mpage = $_users;
+        $susers = "active";
+        $umenu = "menu-open";
+    } elseif ($userbyname != ""  || $resethotspotuser != "") {
+        $susers = "active";
+        $mpage = $_users;
+        $umenu = "menu-open";
+    } elseif ($hotspot == "user-profiles") {
+        $suserprofiles = "active";
+        $suserprof = "active";
+        $mpage = $_user_profile;
+        $upmenu = "menu-open";
+    } elseif ($hotspot == "active" || $removeuseractive != "") {
+        $sactive = "active";
+        $mpage = $_hotspot_active;
+        $hamenu = "menu-open";
+    } elseif ($hotspot == "hosts" || $hotspot == "hostp" || $hotspot == "hosta" || $removehost != "") {
+        $shosts = "active";
+        $mpage = $_hosts;
+        $hmenu = "menu-open";
+    } elseif ($hotspot == "dhcp-leases") {
+        $slease = "active";
+        $mpage = $_dhcp_leases;
+    } elseif ($minterface == "traffic-monitor") {
+        $strafficmonitor = "active";
+        $mpage = $_traffic_monitor;
+    } elseif ($hotspot == "ipbinding" || $hotspot == "binding" || $removeipbinding != "" || $enableipbinding != "" || $disableipbinding != "") {
+        $sipbind = "active";
+        $mpage = $_ip_bindings;
+        $ibmenu = "menu-open";
+    } elseif ($hotspot == "template-editor") {
+        $ssett = "active";
+        $teditor = "active";
+        $mpage = $_template_editor;
+        $settmenu = "menu-open";
+    } elseif ($hotspot == "uplogo") {
+        $ssett = "active";
+        $uplogo = "active";
+        $mpage = $_upload_logo;
+        $settmenu = "menu-open";
+    } elseif ($hotspot == "cookies" || $removecookie != "") {
+        $scookies = "active";
+        $mpage = $_hotspot_cookies;
+        $cmenu = "menu-open";
+    } elseif ($hotspot == "log") {
+        $log = "active";
+        $slog = "active";
+        $mpage = $_hotspot_log;
+        $lmenu = "menu-open";
+    } elseif ($report == "userlog") {
+        $log = "active";
+        $sulog = "active";
+        $mpage = $_user_log;
+        $lmenu = "menu-open";
+    } elseif ($ppp == "secrets" || $ppp == "addsecret" || $enablesecr != "" || $disablesecr != "" || $removesecr != "" || $secretbyname != "") {
+        $mppp = "active";
+        $ssecrets = "active";
+        $mpage = $_ppp_secrets;
+        $pppmenu = "menu-open";
+    } elseif ($ppp == "profiles" || $removepprofile != "" || $ppp == "add-profile" || $ppp == "edit-profile"  ) {
+        $mppp = "active";
+        $spprofile = "active";
+        $mpage = $_ppp_profiles;
+        $pppmenu = "menu-open";
+    } elseif ($ppp == "active" || $removepactive != "") {
+        $mppp = "active";
+        $spactive = "active";
+        $mpage = $_ppp_active;
+        $pppmenu = "menu-open";
+    } elseif ($sys == "scheduler" || $enablesch != "" || $disablesch != "" || $removesch != "") {
+        $sysmenu = "active";
+        $ssch = "active";
+        $mpage = $_system_scheduler;
+        $schmenu = "menu-open";
+    } elseif ($report == "selling" || $report == "resume-report") {
+        $sselling = "active";
+        $mpage = $_report;
+    } elseif ($userprofile == "add") {
+        $suserprof = "active";
+        $sadduserprof = "active";
+        $mpage = $_user_profile;
+        $upmenu = "menu-open";
+    } elseif ($userprofilebyname != "") {
+        $suserprof = "active";
+        $mpage = $_user_profile;
+        $upmenu = "menu-open";
+    } elseif ($hotspot == "users-by-profile") {
+        $susersbp = "active";
+        $mpage = $_vouchers;
+    } elseif ($userbyname != "") {
+        $mpage = $_users;
+        $susers = "active";
+    } elseif ($hotspot == "about") {
+        $mpage = $_about;
+        $sabout = "active";
+    } elseif ($id == "sessions" || $id == "remove" || $router == "new") {
+        $ssesslist = "active";
+        $mpage = $_admin_settings;
+    } elseif ($id == "settings" && $session == "new") {
+        $snsettings = "active";
+        $mpage = $_add_router;
+    } elseif ($id == "settings" || $id == "connect") {
+        $ssettings = "active";
+        $mpage = $_session_settings;
+    } elseif ($id == "about") {
+        $sabout = "active";
+        $mpage = $_about;
+    } elseif ($id == "uplogo") {
+        $suplogo = "active";
+        $mpage = $_upload_logo;
+    } elseif ($id == "editor") {
+        $seditor = "active";
+        $mpage = $_template_editor;
+    }
 }
 
 if($idleto != "disable"){

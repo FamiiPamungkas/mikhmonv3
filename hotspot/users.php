@@ -171,27 +171,36 @@ for ($i = 0; $i < $TotalReg; $i++) {
     $udatalimit = ' ' . formatBytes($udatalimit, 2);
   }
 
-  echo "<tr>";
   ?>
-  <td style='text-align:center;'>  <i class='fa fa-minus-square text-danger pointer' onclick="if(confirm('Are you sure to delete username (<?= $uname; ?>)?')){loadpage('./?remove-hotspot-user=<?= $uid; ?>&session=<?= $session; ?>')}else{}" title='Remove <?= $uname; ?>'></i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-  <?php
-  if ($udisabled == "true") {
-    $uriprocess = "'./?enable-hotspot-user=" . $uid . "&session=" . $session."'";
-    echo '<span class="text-warning pointer" title="Enable User ' . $uname . '"  onclick="loadpage('.$uriprocess.')"><i class="fa fa-lock "></i></span></td>';
-  } else {
-    $uriprocess = "'./?disable-hotspot-user=" . $uid . "&session=" . $session."'";
-    echo '<span class="pointer" title="Disable User ' . $uname . '"  onclick="loadpage('.$uriprocess.')"><i class="fa fa-unlock "></i></span></td>';
-  }
-  echo "<td>" . $userver . "</td>";
-  if ($uname == $upass) {
+    <tr>
+        <td style='text-align:center;'>
+            <i class='fa fa-minus-square text-danger pointer' onclick="if(confirm('Are you sure to delete username (<?= $uname; ?>)?')){loadpage('./?remove-hotspot-user=<?= $uid; ?>&session=<?= $session; ?>')}" title='Remove <?= $uname; ?>'></i>
+            <?php
+            if ($udisabled == "true") {
+                $uriprocess = "'./?enable-hotspot-user=" . $uid . "&session=" . $session."'";
+                echo '<span class="text-warning pointer" title="Enable User ' . $uname . '"  onclick="loadpage('.$uriprocess.')"><i class="fa fa-lock "></i></span>';
+            } else {
+                $uriprocess = "'./?disable-hotspot-user=" . $uid . "&session=" . $session."'";
+                echo '<span class="pointer" title="Disable User ' . $uname . '"  onclick="loadpage('.$uriprocess.')"><i class="fa fa-unlock "></i></span>';
+            }
+            ?>
+        </td>
+        <td><?= $userver ?></td>
+<?php
+   if ($uname == $upass) {
     $usermode = "vc";
   } else {
     $usermode = "up";
   }
-  $popup = "javascript:window.open('./voucher/print.php?user=" . $usermode . "-" . $uname . "&qr=no&session=" . $session . "','_blank','width=320,height=550').print();";
-  $popupQR = "javascript:window.open('./voucher/print.php?user=" . $usermode . "-" . $uname . "&qr=yes&session=" . $session . "','_blank','width=320,height=550').print();";
-  echo "<td><a title='Open User " . $uname . "' href=./?hotspot-user=" . $uid . "&session=" . $session . "><i class='fa fa-edit'></i> " . $uname . " </a>";
-  echo '</td><td class"text-center"><a title="Print ' . $uname . '" href="' . $popup . '"><i class="fa fa-print"></i></a> &nbsp <a title="Print ' . $uname . '" href="' . $popupQR . '"><i class="fa fa-qrcode"></i> </a></td>';
+  $popup = "javascript:window.open('./voucher/print-new.php?user=" . $uname . "&session=" . $session . "','_blank','width=320,height=550').print();";
+?>
+        <td>
+            <a title='Open User <?= $uname ?>' href=./?hotspot-user=<?= $uid ?>&session=<?= $session ?>><i class='fa fa-edit'></i> <?= $uname ?></a>
+        </td>
+        <td style="text-align: center">
+            <a title="Print <?= $uname ?>" href="<?= $popup ?>"><i class="fa fa-print"></i></a>
+        </td>
+<?php
   echo "<td>" . $uprofile . "</td>";
   echo "<td style=' text-align:left'>" . $umacadd . "</td>";
   echo "<td style=' text-align:right'>" . $uuptime . "</td>";
