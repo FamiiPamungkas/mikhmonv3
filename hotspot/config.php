@@ -17,7 +17,7 @@ return [
             "prefix" => "1hm",
             "user_length" => 4,
             "pass_length" => 4,
-            "time_limit" => "4h",
+            "time_limit" => "24h",
             "rate_limit" => "5M/5M",
             "shared_users" => "1",
             "mac_cookie_timeout" => "1d",
