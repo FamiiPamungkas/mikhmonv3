@@ -31,6 +31,7 @@ if (!isset($_SESSION["mikhmon"])) {
     require_once 'utils.php';
 
     $exp = get_parameter("exp");
+    $fixUptime = get_parameter("fixUptime");
 
     $cfg_profiles = hotspot_config("profiles");
 
@@ -49,6 +50,10 @@ if (!isset($_SESSION["mikhmon"])) {
             }
         }
         if ($exists) $filtered_users[] = $u;
+    }
+
+    if ($fixUptime && $prof != "all"){
+        fix_uptime($filtered_users, $prof);
     }
 
     $getuser = $filtered_users;

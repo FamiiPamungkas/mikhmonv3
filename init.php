@@ -61,4 +61,4 @@ $removereport = get_parameter('remove-report');
 $minterface = get_parameter('interface');
 
 // hide all error
-//error_reporting(0);
+error_reporting(0);

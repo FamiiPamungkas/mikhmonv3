@@ -21,3 +21,21 @@ function get_comment_group($profile = ""): array
     }
     return $comment_group;
 }
+
+function fix_uptime($users, $prof)
+{
+    if (!$prof) return;
+    $cfg_profiles = hotspot_config("profiles");
+
+    $profile = $cfg_profiles[$prof];
+    if (!$profile) return;
+
+    foreach ($users as $u) {
+        if (isset($u['profile']) && $u['profile'] === $prof) {
+            RouterosAPI::getInstance()->comm("/ip/hotspot/user/set", array(
+                ".id" => $u['.id'],
+                "limit-uptime" => $profile['time_limit'],
+            ));
+        }
+    }
+}
