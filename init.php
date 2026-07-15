@@ -31,6 +31,7 @@ $removehotspotusers = get_parameter('remove-hotspot-users');
 $removeuserprofile = get_parameter('remove-user-profile');
 $resethotspotuser = get_parameter('reset-hotspot-user');
 $removehotspotuserbycomment = get_parameter('remove-hotspot-user-by-comment');
+$fix_uptime = get_parameter('fix_uptime');
 $removeexpiredhotspotuser = get_parameter('remove-hotspot-user-expired');
 $enablehotspotuser = get_parameter('enable-hotspot-user');
 $disablehotspotuser = get_parameter('disable-hotspot-user');

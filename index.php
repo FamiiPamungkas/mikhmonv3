@@ -231,6 +231,11 @@ elseif ($hotspot == "list-quick-print") {
     include_once('./process/removehotspotuserbycomment.php');
   }
 
+    elseif ($fix_uptime != "") {
+        echo "<b class='cl-w'><i class='fa fa-circle-o-notch fa-spin' style='font-size:24px'></i> Processing...</b>";
+        include_once('./hotspot/fix-uptime.php');
+    }
+
 // remove expired hotspot user
 elseif ($removeexpiredhotspotuser != "") {
   echo "<b class='cl-w'><i class='fa fa-circle-o-notch fa-spin' style='font-size:24px'></i> Processing...</b>";
